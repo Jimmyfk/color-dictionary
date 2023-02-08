@@ -1,31 +1,33 @@
 const defaultColor = '#ffffff';
 
 const colors = {
-    white: defaultColor,
-    black: '#000000',
-    red: '#ff0000',
-    green: '#00ff00',
-    blue: '#0000ff',
-    violet: '#ba55d3',
+    white: [defaultColor],
+    black: ['#000000'],
+    red: ['#ff0000'],
+    green: ['#00ff00'],
+    blue: ['#0000ff'],
+    violet: ['#ba55d3'],
 }
 
 const defaultBorder = '1px solid #000000';
-function getColor(color) {
-    return colors[color] ?? defaultColor;
+
+function getColor(color, index) {
+    return colors[color][index] ?? defaultColor;
 }
 
 function checkColor(colorsKey, element) {
     if (colorsKey === 'white') {
-        element.style.color = getColor('black');
+        element.style.color = getColor('black', 0);
         element.style.border = defaultBorder;
     } else {
-        element.style.color = getColor('white');
+        element.style.color = getColor('white', 0);
         element.style.border = 'none';
     }
 }
 
 function createButton(color, key) {
     const button =  document.createElement('button');
+    button.setAttribute('id', 'button' + key);
     checkColor(key, button);
     button.style.backgroundColor = color;
     button.innerHTML = key;
@@ -38,8 +40,8 @@ function createButton(color, key) {
     return button;
 }
 
-function cretateParagraph(key) {
-    let p = document.getElementById('p' + key);
+function createParagraph(key) {
+    let p = document.getElementById('p' + key + colors);
     if (!p) {
         p = document.createElement('p');
         p.setAttribute('id', 'p' + key);
@@ -51,32 +53,33 @@ function cretateParagraph(key) {
 }
 
 function addListener(color, key, div) {
-    if (div.style.display === 'flex') {
-        div.style.display = 'none';
-    } else {
-        div.style.backgroundColor = color;
-        checkColor(key, div);
-        div.style.borderRadius = '5px';
-        div.style.padding = '5px';
-        div.style.height = '30px';
-        div.style.cursor = 'pointer';
-        div.style.display = 'flex';
-        div.style.justifyContent = 'center';
-        div.style.alignItems = 'center';
-        const p = cretateParagraph(key);
-        div.appendChild(p);
-    }
+    div.classList.toggle('active');
+    div.style.backgroundColor = color;
+    checkColor(key, div);
+    div.style.borderRadius = '5px';
+    div.style.padding = '5px';
+    div.style.height = '30px';
+    div.style.cursor = 'pointer';
+    div.style.display = div.classList.contains('active') ? 'flex' : 'none';
+    div.style.justifyContent = 'center';
+    div.style.alignItems = 'center';
+    const p = createParagraph(key);
+    div.appendChild(p);
 }
-function setAttributes(elements){
-    elements.divColor.setAttribute('class', elements.colorsKey);
-    const button = createButton(elements.color, elements.colorsKey);
-
+function setAttributes(elements, exists = false){
+    let button;
+    if (!exists) {
+        elements.divColor.setAttribute('class', elements.colorsKey + 0);
+        button = createButton(elements.color, elements.colorsKey);
+        elements.container.appendChild(button);
+    } else {
+        elements.divColor.setAttribute('class', elements.colorsKey + (colors[elements.key] - 1));
+        button = document.getElementById('button' + elements.key);
+    }
+    elements.container.appendChild(elements.divColor);
     button.addEventListener('click', () => {
         addListener(elements.color, elements.colorsKey, elements.divColor);
     });
-
-    elements.container.appendChild(button);
-    elements.container.appendChild(elements.divColor);
 }
 
 function addButtons() {
@@ -84,7 +87,7 @@ function addButtons() {
     const div = document.createElement('div')
     div.setAttribute('class', 'colors');
     for (let colorsKey in colors) {
-        const color = colors[colorsKey];
+        const color = colors[colorsKey][0];
         const divColor = document.createElement('div');
         const container = document.createElement('div');
         container.setAttribute('class', 'container' + colorsKey);
@@ -105,21 +108,31 @@ function addButtons() {
 function addColorObj(color, key) {
     let exist = false;
     for (let colorsKey in colors) {
-        if (colorsKey === key || colors[colorsKey] === color) {
-            exist = true;
-            console.log('colors key: ' + colorsKey + '\ncolor: ' + colors[colorsKey] + '\nexiste: ' + (exist ?  'sí' : 'no'));
+        // check if the color exists
+        exist = colorExists(colorsKey, color);
+        if (exist) {
             break;
         }
     }
+
     if (exist) {
         return false;
     }
-    colors[key] = color;
+    colors[key].push(color);
     return true
+}
+
+function colorExists(key, color) {
+    if (!colors[key]) {
+        colors[key] = new Array(1);
+    }
+    return colors[key].includes(color);
 }
 
 function addColor(event) {
     event.preventDefault();
+    let div, container = null;
+    let exists = false;
     const form = document.getElementById('addColor');
     if (!form.checkValidity()) {
         return;
@@ -131,23 +144,33 @@ function addColor(event) {
 
     const color = form.color.value;
     const key = form.name.value;
+
     if (!addColorObj(color, key)) {
         form.reset();
         return;
     }
-    const div = document.createElement('div');
-    const container = document.createElement('div');
-    container.setAttribute('class', 'container' + key);
+
+    if (colors[key].length > 1) {
+        exists = true;
+        div = document.getElementsByClassName(key)[0];
+        container = document.getElementsByClassName('container' + key)[0];
+    } else {
+        div = document.createElement('div');
+        container = document.createElement('div');
+        container.setAttribute('class', 'container' + key);
+    }
+
     const elements = {
         color: color,
         divColor: div,
         colorsKey: key,
         container: container
     }
-    setAttributes(elements);
+
+    setAttributes(elements, exists);
     document.getElementById('main').appendChild(container);
     form.reset();
-    console.log ('Color added: ' + getColor(key) + '\nDictionary updated: ' + JSON.stringify(colors, null, '\t'));
+    console.log ('Color added: ' + getColor(key, colors.key.length - 1) + '\nDictionary updated: ' + JSON.stringify(colors, null, '\t'));
 }
 
 const hexToRgb = hex =>
@@ -159,4 +182,4 @@ const hexToRgb = hex =>
 const rgbToHex = (r, g, b) => '#' + [r, g, b]
     .map(x => x.toString(16).padStart(2, '0')).join('')
 
-addButtons();
+window.onload = addButtons;
