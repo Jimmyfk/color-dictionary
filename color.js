@@ -1,5 +1,9 @@
-const defaultColor = '#ffffff';
+/*
+first version, simple dictionary
+ */
 
+const defaultColor = '#ffffff';
+const defaultBorder = '1px solid #000000';
 const colors = {
     white: defaultColor,
     black: '#000000',
@@ -9,7 +13,6 @@ const colors = {
     violet: '#ba55d3',
 }
 
-const defaultBorder = '1px solid #000000';
 function getColor(color) {
     return colors[color] ?? defaultColor;
 }
@@ -107,7 +110,7 @@ function addColorObj(color, key) {
     for (let colorsKey in colors) {
         if (colorsKey === key || colors[colorsKey] === color) {
             exist = true;
-            console.log('colors key: ' + colorsKey + '\ncolor: ' + colors[colorsKey] + '\nexiste: ' + (exist ?  'sí' : 'no'));
+            console.log('colors key: ' + colorsKey + '\ncolor: ' + colors[colorsKey] + '\nexists: ' + (exist ?  'yes' : 'no'));
             break;
         }
     }
