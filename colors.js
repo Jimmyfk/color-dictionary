@@ -43,8 +43,8 @@ function createParagraph(key, index = 0) {
     if (!p) {
         p = document.createElement('p');
         p.setAttribute('id', 'p' + key + colors[key][index]);
-        console.log(p);
     }
+    // doesn't work with new colors added to an existing key
     p.innerHTML = key;
     p.style.fontFamily = 'Helvetica, non-serif';
 
@@ -54,6 +54,7 @@ function createParagraph(key, index = 0) {
 function addListener(color, key) {
     const divs = document.querySelectorAll('.div' + key);
     console.log(divs, color, key);
+    // todo replace active with ifs
     for (let div of divs) {
         div.classList.toggle('active');
         div.style.backgroundColor = color;
@@ -174,6 +175,7 @@ function addColor(event) {
         container.setAttribute('class', 'container' + key);
     }
 
+    // todo fix new color takes old color value
     const elements = {
         color: color,
         divColor: div,
@@ -182,11 +184,10 @@ function addColor(event) {
     }
 
     setAttributes(elements, exists);
-    document.getElementById('main').appendChild(container);
     form.reset();
     console.log ('Color added: ' + getColor(key, colors[key].length - 1) + '\nDictionary updated: ' + JSON.stringify(colors, null, '\t'));
 }
-
+// stackOverflow functions
 const hexToRgb = hex =>
     hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
         ,(m, r, g, b) => '#' + r + r + g + g + b + b)
@@ -216,4 +217,5 @@ function waitForElm(selector) {
     });
 }
 
+// start
 window.onload = addButtons;
