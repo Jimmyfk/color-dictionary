@@ -54,21 +54,25 @@ function createParagraph(key, index = 0) {
 function addListener(color, key) {
     const divs = document.querySelectorAll('.div' + key);
     console.log(divs, color, key);
-    // todo replace active with ifs
+    // color fixed, paragraph not working on new colors added to an existing key
+    let index = 0;
     for (let div of divs) {
-        div.classList.toggle('active');
-        div.style.backgroundColor = color;
-        checkColor(key, div);
-        div.style.borderRadius = '5px';
-        div.style.padding = '5px';
-        div.style.height = '30px';
-        div.style.cursor = 'pointer';
-        div.style.display = div.classList.contains('active') ? 'flex' : 'none';
-        div.style.justifyContent = 'center';
-        div.style.alignItems = 'center';
-        div.style.margin = '10px';
-        const p = createParagraph(key);
-        div.appendChild(p);
+        if (div.style.display === 'flex') {
+            div.style.display = 'none';
+        } else {
+            div.style.backgroundColor = getColor(key, index);
+            checkColor(key, div);
+            div.style.borderRadius = '5px';
+            div.style.padding = '5px';
+            div.style.height = '30px';
+            div.style.cursor = 'pointer';
+            div.style.display = 'flex';
+            div.style.justifyContent = 'center';
+            div.style.alignItems = 'center';
+            const p = createParagraph(key);
+            div.appendChild(p);
+        }
+        index++;
     }
 }
 function setAttributes(elements, exists = false){
@@ -194,10 +198,10 @@ const hexToRgb = hex =>
     hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
         ,(m, r, g, b) => '#' + r + r + g + g + b + b)
         .substring(1).match(/.{2}/g)
-        .map(x => parseInt(x, 16))
+        .map(x => parseInt(x, 16));
 
 const rgbToHex = (r, g, b) => '#' + [r, g, b]
-    .map(x => x.toString(16).padStart(2, '0')).join('')
+    .map(x => x.toString(16).padStart(2, '0')).join('');
 
 function waitForElm(selector) {
     return new Promise(resolve => {
