@@ -63,7 +63,10 @@ function createParagraph(key, index = 0) {
 function addListener(color, key) {
     const divs = document.querySelectorAll('.div' + key);
     console.log(divs, color, key);
-    // color fixed, paragraph not working on new colors added to an existing key
+    /*
+     color fixed, paragraph not working on new colors added to an existing key
+     div is acting weird, need fix
+     */
     let index = 0;
     for (let div of divs) {
         if (div.style.display === 'flex') {
@@ -78,6 +81,7 @@ function addListener(color, key) {
             div.style.display = 'flex';
             div.style.justifyContent = 'center';
             div.style.alignItems = 'center';
+            div.style.margin = '1em';
             const p = createParagraph(key);
             div.appendChild(p);
         }
@@ -98,8 +102,6 @@ function setAttributes(elements, exists = false){
             elements.divColor = document.createElement('div');
         }
         elements.divColor.setAttribute('class', 'div' + elements.colorsKey);
-        console.log('color: ' + elements.color);
-        // color its fine here, problem its in addlistener function
     }
     elements.container.appendChild(elements.divColor);
     waitForElm('#button' + elements.key, (elm) => {})
@@ -147,16 +149,21 @@ function addColorObj(color, key) {
         return false;
     }
 
+    // if the color key doesn't exist, initialize new array
     if (!colors[key]) {
         colors[key] = [];
     }
 
     colors[key].push(color);
-    return true
+    return true;
 }
 
 function colorExists(key, color) {
-    return colors[key].includes(color);
+    try {
+        return colors[key].includes(color);
+    } catch (error) {
+        return false;
+    }
 }
 
 function addColor(event) {
@@ -164,11 +171,14 @@ function addColor(event) {
     let div, container = null;
     let exists = false;
     const form = document.getElementById('addColor');
+    // todo add constraints
     if (!form.checkValidity()) {
+        form.reset();
         return;
     }
 
     if (!form.color.value || !form.name.value) {
+        form.reset();
         return;
     }
 
@@ -180,6 +190,7 @@ function addColor(event) {
         return;
     }
 
+    // check if the color exists
     if (colors[key].length > 1) {
         exists = true;
         div = document.getElementsByClassName(key)[0];
@@ -196,7 +207,6 @@ function addColor(event) {
         colorsKey: key,
         container: container
     }
-    console.log(JSON.stringify(elements, null, '\t'));
 
     setAttributes(elements, exists);
     form.reset();
