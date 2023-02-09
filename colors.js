@@ -85,6 +85,8 @@ function setAttributes(elements, exists = false){
             elements.divColor = document.createElement('div');
         }
         elements.divColor.setAttribute('class', 'div' + elements.colorsKey);
+        console.log('color: ' + elements.color);
+        // color its fine here, problem its in addlistener function
     }
     elements.container.appendChild(elements.divColor);
     waitForElm('#button' + elements.key, (elm) => {})
@@ -175,13 +177,13 @@ function addColor(event) {
         container.setAttribute('class', 'container' + key);
     }
 
-    // todo fix new color takes old color value
     const elements = {
         color: color,
         divColor: div,
         colorsKey: key,
         container: container
     }
+    console.log(JSON.stringify(elements, null, '\t'));
 
     setAttributes(elements, exists);
     form.reset();
