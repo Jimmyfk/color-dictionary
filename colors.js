@@ -1,3 +1,8 @@
+/*
+v2.0.0
+now each key has an array to add more colors to the same key
+todo check colors and add to existing array if it matches
+ */
 const defaultColor = '#ffffff';
 const defaultBorder = '1px solid #000000';
 const colors = {
