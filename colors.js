@@ -15,7 +15,11 @@ const colors = {
 }
 
 function getColor(color, index) {
-    return colors[color][index] ?? defaultColor;
+    try {
+        return colors[color][index];
+    } catch (error) {
+        return defaultColor;
+    }
 }
 
 function checkColor(colorsKey, element) {
