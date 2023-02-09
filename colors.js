@@ -48,13 +48,13 @@ function createButton(color, key) {
 }
 
 function createParagraph(key, index = 0) {
-    let p = document.getElementById('p' + key + colors[key][index]);
+    let p = document.getElementById('p' + key + index);
     if (!p) {
         p = document.createElement('p');
-        p.setAttribute('id', 'p' + key + colors[key][index]);
+        p.setAttribute('id', 'p' + key + index);
     }
     // doesn't work with new colors added to an existing key
-    p.innerHTML = key;
+    p.innerHTML = key + index;
     p.style.fontFamily = 'Helvetica, non-serif';
 
     return p;
