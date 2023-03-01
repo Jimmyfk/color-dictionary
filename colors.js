@@ -13,7 +13,32 @@ const colors = {
     blue: ['#0000ff'],
     violet: ['#ba55d3'],
 }
+const show = 'show', hide = 'hide';
 
+const showDiv = (div, key = null) => {
+    div.classList.add(show);
+    if (div.classList.contains(hide)) {
+        div.classList.remove(hide)
+    }
+}
+
+const hideDiv = (div, key = null) => {
+    div.classList.add(hide);
+    if (div.classList.contains(show)) {
+        div.classList.remove(show);
+    }
+}
+
+const showAllDivs = (divs, key) => {
+    for (let index = 0; index < divs.length; index++) {
+        showDiv(divs[index], key);
+    }
+}
+const hideAllDivs = (divs, key) => {
+    for (let index = 0; index < divs.length; index++) {
+        hideDiv(divs[index], key);
+    }
+};
 const getElements = (color, key, div, container) => {
     return {
         color: color,
@@ -27,7 +52,7 @@ const toggleClass = (element, classes = [], option) => {
     if (!element || classes.length < 1) {
         return;
     }
-
+    console.log(classes, element, option);
     for (const cssClass of classes) {
         const pattern = /div.+/g;
 
@@ -35,22 +60,9 @@ const toggleClass = (element, classes = [], option) => {
             element.classList.add(cssClass);
             continue;
         }
-
-        switch (String(option)) {
-            case '+':
-            case 'show':
-                element.classList.add(cssClass);
-                break;
-            case '-':
-            case 'hide':
-                element.classList.remove(cssClass);
-                break;
-            case '*':
-            case 'toggle':
-                element.classList.toggle(cssClass);
-                break
-            default:
-               console.error('option must be +/show or -/hide. fuck you');
+        if (String(option) === '*') {
+            element.classList.toggle(cssClass);
+            element.classList.toggle(cssClass === show ? hide : show);
         }
     }
 }
@@ -156,18 +168,7 @@ const addListener = async (color, key, event) => {
 
     for (let index = 0; index < divs.length; index++) {
         const div = divs[index];
-        const list = Array.from(div.classList);
-        if (index === 0) {
-            toggleClass(div, Array.of('show'), '+'); // ?¿??
-        } else {
-            if (list.toString().includes('hide')) {
-                toggleClass(div, Array.of('hide'), '+');
-                toggleClass(div, Array.of('show'), '-');
-            } else {
-                toggleClass(div, Array.of('show'), '+');
-                toggleClass(div, Array.of('hide'), '-');
-            }
-        }
+        const list = Array.from(div.classList).toString();
         setDivProperties(div, color, key, index);
     }
 };
@@ -176,7 +177,6 @@ const setAttributes = async (elements, exists = false) => {
     let button;
 
     if (!exists) {
-        toggleClass(elements.divColor, Array.of('show'), '*');
         toggleClass(elements.divColor, Array.of('div' + elements.colorsKey), '+');
         button = createButton(elements.color, elements.colorsKey);
         button.addEventListener('click', (e) => {
@@ -187,7 +187,6 @@ const setAttributes = async (elements, exists = false) => {
         if (!elements.divColor) {
             elements.divColor = document.createElement('div');
         }
-        //toggleClass(elements.divColor, Array.of('hide'), '*');
     }
     elements.container.appendChild(elements.divColor);
     await waitForElm('#button' + elements.colorsKey).then(() => {
@@ -197,20 +196,7 @@ const setAttributes = async (elements, exists = false) => {
     });
 }
 
-const hideDivs = (divs, key) => {
-    divs.forEach((div) => {
-        try {
-            if (div.classList.toString().includes('show')) {
-                toggleClass(div, Array.of('hide'), '*');
-                toggleClass(div, Array.of('show'), '*');
-            }
-        } catch (e) {
-            // wtf its happening
-            toggleClass(div, Array.of('hide'), '*');
-            toggleClass(div, Array.of('show'), '*');
-        }
-    });
-};
+
 const addColor = async event => {
     event.preventDefault();
     let div, container = null;
@@ -243,13 +229,12 @@ const addColor = async event => {
             divs = Array.from(p);
         });
         // hide all divs to avoid weird behaviour
-        hideDivs(divs, key); // doesn't work what a surprise
+        hideAllDivs(divs, key);
         div = divs[0];
         container = document.getElementsByClassName('container' + key)[0];
     } else {
         div = document.createElement('div');
         container = document.createElement('div');
-        toggleClass(container, Array.of('show'), '+');
     }
 
     const elements = getElements(color, key, div, container);
@@ -318,4 +303,46 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b]
     .map(x => x.toString(16).padStart(2, '0')).join('');
 
 // start
-window.onload = addButtons;
+const initialize = async () => {
+    //add the buttons
+    addButtons();
+    let divs;
+    //get all the divs no matter the color
+    await waitForElm(null, ['.div']).then((p) => {
+        divs =  Array.from(p);
+        console.log('divs: ' + divs);
+    });
+
+    //hide all divs by default
+    hideAllDivs(divs);
+
+    //add listener to buttons
+    let buttons;
+    await waitForElm(null, ['button']).then((p) => {
+        buttons =  Array.from(p);
+    });
+    for (let i = 0; i < buttons.length; i++) {
+        const button = buttons[i];
+        button.addEventListener('click', (e) => {
+            // show the divs?
+            for (let j = 0; j < divs.length; j++) {
+                const div = divs[j]
+                if (div.classList.includes('div')) {
+                    if (div.classList.length === 1) {
+                        // only color class
+                        showDiv(div);
+                    } else {
+                        // color class + show/hide
+                        if (div.classList.contains(show)) {
+                         //   showDiv(div);
+                        } else {
+                            hideDiv(div);
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+window.onload = initialize;
