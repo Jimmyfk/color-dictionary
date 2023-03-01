@@ -14,15 +14,15 @@ const colors = {
     violet: ['#ba55d3'],
 }
 
-function getColor(color, index) {
+const getColor = (color, index) => {
     try {
         return colors[color][index];
     } catch (error) {
         return defaultColor;
     }
-}
+};
 
-function checkColor(colorsKey, element) {
+const checkColor = (colorsKey, element) => {
     if (colorsKey === 'white') {
         element.style.color = getColor('black', 0);
         element.style.border = defaultBorder;
@@ -30,9 +30,9 @@ function checkColor(colorsKey, element) {
         element.style.color = getColor('white', 0);
         element.style.border = 'none';
     }
-}
+};
 
-function createButton(color, key) {
+const createButton = (color, key) => {
     const button =  document.createElement('button');
     button.setAttribute('id', 'button' + key);
     checkColor(key, button);
@@ -45,9 +45,9 @@ function createButton(color, key) {
     button.style.cursor = 'pointer';
     button.style.width = '5em';
     return button;
-}
+};
 
-function createParagraph(key, index = 0) {
+const createParagraph = (key, index = 0) => {
     let p = document.getElementById('p' + key + index);
     if (!p) {
         p = document.createElement('p');
@@ -58,9 +58,9 @@ function createParagraph(key, index = 0) {
     p.style.fontFamily = 'Helvetica, non-serif';
 
     return p;
-}
+};
 
-function addListener(color, key) {
+const addListener = (color, key) => {
     const divs = document.querySelectorAll('.div' + key);
     console.log(divs, color, key);
     /*
@@ -82,13 +82,13 @@ function addListener(color, key) {
             div.style.justifyContent = 'center';
             div.style.alignItems = 'center';
             div.style.margin = '1em';
-            const p = createParagraph(key);
+            const p = createParagraph(key, index);
             div.appendChild(p);
         }
         index++;
     }
-}
-function setAttributes(elements, exists = false){
+};
+const setAttributes = (elements, exists = false) => {
     let button;
     if (!exists) {
         elements.divColor.setAttribute('class','div' + elements.colorsKey);
@@ -110,63 +110,9 @@ function setAttributes(elements, exists = false){
                 addListener(elements.color, elements.colorsKey);
         });
     });
-}
+};
 
-function addButtons() {
-    const main = document.getElementById('main');
-    const div = document.createElement('div')
-    div.setAttribute('class', 'colors');
-    for (let colorsKey in colors) {
-        const color = colors[colorsKey][0];
-        const divColor = document.createElement('div');
-        const container = document.createElement('div');
-        container.setAttribute('class', 'container' + colorsKey);
-        const elements = {
-            color: color,
-            divColor: divColor,
-            colorsKey: colorsKey,
-            container: container
-        };
-        setAttributes(elements);
-
-        main.appendChild(container);
-        const form = document.getElementById('addColor');
-        form.addEventListener('submit', addColor);
-    }
-}
-
-function addColorObj(color, key) {
-    let exist = false;
-    for (let colorsKey in colors) {
-        // check if the color exists
-        exist = colorExists(colorsKey, color);
-        if (exist) {
-            break;
-        }
-    }
-
-    if (exist) {
-        return false;
-    }
-
-    // if the color key doesn't exist, initialize new array
-    if (!colors[key]) {
-        colors[key] = [];
-    }
-
-    colors[key].push(color);
-    return true;
-}
-
-function colorExists(key, color) {
-    try {
-        return colors[key].includes(color);
-    } catch (error) {
-        return false;
-    }
-}
-
-function addColor(event) {
+const addColor = event => {
     event.preventDefault();
     let div, container = null;
     let exists = false;
@@ -211,7 +157,65 @@ function addColor(event) {
     setAttributes(elements, exists);
     form.reset();
     console.log ('Color added: ' + getColor(key, colors[key].length - 1) + '\nDictionary updated: ' + JSON.stringify(colors, null, '\t'));
-}
+};
+
+const addButtons = () => {
+    const main = document.getElementById('main');
+    const div = document.createElement('div')
+    div.setAttribute('class', 'colors');
+    for (let colorsKey in colors) {
+        const color = colors[colorsKey][0];
+        const divColor = document.createElement('div');
+        const container = document.createElement('div');
+        container.setAttribute('class', 'container' + colorsKey);
+        const elements = {
+            color: color,
+            divColor: divColor,
+            colorsKey: colorsKey,
+            container: container
+        };
+        setAttributes(elements);
+
+        main.appendChild(container);
+        const form = document.getElementById('addColor');
+        form.addEventListener('submit', addColor);
+    }
+};
+
+const colorExists = (key, color) => {
+    try {
+        return colors[key].includes(color);
+    } catch (error) {
+        return false;
+    }
+};
+
+const addColorObj = (color, key) => {
+    let exist = false;
+    for (let colorsKey in colors) {
+        // check if the color exists
+        exist = colorExists(colorsKey, color);
+        if (exist) {
+            break;
+        }
+    }
+
+    if (exist) {
+        return false;
+    }
+
+    // if the color key doesn't exist, initialize new array
+    if (!colors[key]) {
+        colors[key] = [];
+    }
+
+    colors[key].push(color);
+    return true;
+};
+
+
+
+
 // stackOverflow functions
 const hexToRgb = hex =>
     hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
