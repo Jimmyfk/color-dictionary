@@ -54,7 +54,7 @@ const toggleClass = (element, classes = [], option) => {
                 element.classList.toggle(cssClass);
                 break
             default:
-               console.error('option must be +/show or -/hide \nFuck you');
+               console.error('option must be +/show or -/hide. fuck you');
         }
     }
 }
@@ -106,19 +106,26 @@ const createParagraph = (key, index = 0) => {
 
 const addListener = (color, key, event) => {
     event.stopImmediatePropagation();
-    let divs = document.querySelectorAll('.div' + key);
+    let divs;
+    waitForElm(null, ['.div' + key]).then((p) => {
+        divs = p;
+        console.log('Promise solved: divs', divs, 'result: ' + p);
+    });
     if (!divs) {
+        // this is shit
+        console.log('BAD');
         divs = document.createElement('div');
         divs = Array.of(divs);
         divs[0].classList.add('div' + key);
     }
     console.log(divs, color, key);
 
-    let index = 0;
-    for (let div of divs) {
+    for (let index = 0; index < divs.length; index++) {
+        const div = divs[index];
         const list = Array.of(div.classList);
+        console.log(list, list.length);
         if (index === 0) {
-            if (div.classList.length === 3) {
+            if (list.length === 3) {
                 toggleClass(div, Array.of('show'), '-');
             }
             toggleClass(div, Array.of('hide'), '+'); // hidden by default
@@ -126,7 +133,7 @@ const addListener = (color, key, event) => {
             console.log('\n' + list);
 
         } else {
-            if (div.classList.length === 3) {
+            if (list.length === 3) {
                 toggleClass(div, Array.of('show'), '-');
             }
             div.style.backgroundColor = getColor(key, index);
@@ -151,7 +158,6 @@ const addListener = (color, key, event) => {
             const p = createParagraph(key, index);
             div.appendChild(p);
         }
-        index++;
     }
 };
 
@@ -165,8 +171,10 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
     let mSelector;
     if (multipleSelectors && multipleSelectors.length > 0) {
         mSelector = multipleSelectors.join(' ');
+        console.log(mSelector);
         if (document.querySelectorAll(mSelector)) {
-            return resolve(document.querySelectorAll(mSelector));
+            console.log('Multiple Select Done');
+            return resolve(document.querySelectorAll(mSelector).result);
         }
     }
 
@@ -193,6 +201,7 @@ const setAttributes = (elements, exists = false) => {
 
     if (!exists) {
         toggleClass(elements.divColor, Array.of('show'), '*');
+        toggleClass(elements.divColor, Array.of('div' + elements.colorsKey), '+');
         button = createButton(elements.color, elements.colorsKey);
         button.addEventListener('click', (e) => {
             addListener(elements.color, elements.colorsKey, e);
@@ -204,6 +213,7 @@ const setAttributes = (elements, exists = false) => {
         }
         toggleClass(elements.divColor, Array.of('hide'), '*');
     }
+    console.log('div to append: ' + elements.divColor);
     elements.container.appendChild(elements.divColor);
     waitForElm('#button' + elements.colorsKey).then(() => {
         button.addEventListener('click', (e) => {
@@ -220,7 +230,7 @@ const hideDivs = (divs, key) => {
                 toggleClass(div, Array.of('show'), '*');
                 console.log('flex');
             }
-        } catch(e) {
+        } catch (e) {
             // wtf its happening
             console.log('Error:\n' + e, '\ndiv:' + div);
             toggleClass(div, Array.of('hide'), '*');
@@ -253,11 +263,15 @@ const addColor = event => {
     }
 
     // check if the color exists
-    if (colors[key].length > 1) {
+    if (colors[key].length >= 1) {
         exists = true;
-        const divs = document.querySelectorAll('.div' + key);
+        let divs;
+        waitForElm(null, ['.div' + key]).then((p) => {
+            divs = Array.of(p);
+            console.log('Promise resolved, divs: ' + divs);
+        });
         // hide all divs to avoid weird behaviour
-        hideDivs(Array.of(divs), key);
+        hideDivs(Array.of(divs), key); // doesn't work what a surprise'
         console.log(Array.of(divs));
         div = divs[0];
         container = document.getElementsByClassName('container' + key)[0];
