@@ -32,7 +32,6 @@ const toggleClass = (element, classes = [], option) => {
         const pattern = /div.+/g;
 
         if (pattern.test(cssClass)) {
-            console.log('Setting color class', cssClass);
             element.classList.add(cssClass);
             continue;
         }
@@ -40,17 +39,14 @@ const toggleClass = (element, classes = [], option) => {
         switch (String(option)) {
             case '+':
             case 'show':
-                console.log('Adding class ' + cssClass, '\nOption: ', option);
                 element.classList.add(cssClass);
                 break;
             case '-':
             case 'hide':
-                console.log('Removing class ' + cssClass, '\nOption: ', option);
                 element.classList.remove(cssClass);
                 break;
             case '*':
             case 'toggle':
-                console.log('Toggling class ' + cssClass);
                 element.classList.toggle(cssClass);
                 break
             default:
@@ -104,64 +100,7 @@ const createParagraph = (key, index = 0) => {
     return p;
 };
 
-const addListener = (color, key, event) => {
-    event.stopImmediatePropagation();
-    let divs;
-    waitForElm(null, ['.div' + key]).then((p) => {
-        divs = p;
-        console.log('Promise solved: divs', divs, 'result: ' + p);
-    });
-    if (!divs) {
-        // this is shit
-        console.log('BAD');
-        divs = document.createElement('div');
-        divs = Array.of(divs);
-        divs[0].classList.add('div' + key);
-    }
-    console.log(divs, color, key);
-
-    for (let index = 0; index < divs.length; index++) {
-        const div = divs[index];
-        const list = Array.of(div.classList);
-        console.log(list, list.length);
-        if (index === 0) {
-            if (list.length === 3) {
-                toggleClass(div, Array.of('show'), '-');
-            }
-            toggleClass(div, Array.of('hide'), '+'); // hidden by default
-            console.log('%cfirst index ' + '\nNº of classes: ' + list.length, 'color: red');
-            console.log('\n' + list);
-
-        } else {
-            if (list.length === 3) {
-                toggleClass(div, Array.of('show'), '-');
-            }
-            div.style.backgroundColor = getColor(key, index);
-            checkColor(key, div);
-            div.style.borderRadius = '5px';
-            div.style.padding = '5px';
-            div.style.height = '30px';
-            div.style.cursor = 'pointer';
-            console.log('%cincludes hide:  ' + (list.toString().includes('hide')) + ' and show: ' + (list.toString().includes('show')) + '.\nRemoving hide ', 'color: red');
-            console.log('\n' + list);
-            if (list.toString().includes('hide') && !list.toString().includes('show')) {
-                toggleClass(div, Array.of('hide'), '*');
-                console.log('%cincludes hide:  ' + (list.toString().includes('hide')), 'color: yellow');
-            } else {
-                toggleClass(div, Array.of('show'), '*');
-                console.log('%cincludes show: ' + (list.toString).includes('show'), 'color: blue');
-            }
-
-            div.style.justifyContent = 'center';
-            div.style.alignItems = 'center';
-            div.style.margin = '1em';
-            const p = createParagraph(key, index);
-            div.appendChild(p);
-        }
-    }
-};
-
-const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => {
+const waitForElm = async (selector, multipleSelectors = []) => new Promise(resolve => {
     if (selector && selector.length > 0) {
         if (document.querySelector(selector)) {
             return resolve(document.querySelector(selector));
@@ -171,10 +110,8 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
     let mSelector;
     if (multipleSelectors && multipleSelectors.length > 0) {
         mSelector = multipleSelectors.join(' ');
-        console.log(mSelector);
         if (document.querySelectorAll(mSelector)) {
-            console.log('Multiple Select Done');
-            return resolve(document.querySelectorAll(mSelector).result);
+            return resolve(document.querySelectorAll(mSelector));
         }
     }
 
@@ -196,7 +133,46 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
     });
 });
 
-const setAttributes = (elements, exists = false) => {
+const setDivProperties = (div, color, key, index) => {
+    div.style.backgroundColor = getColor(key, index);
+    checkColor(key, div);
+    div.style.borderRadius = '5px';
+    div.style.padding = '5px';
+    div.style.height = '30px';
+    div.style.cursor = 'pointer';
+    div.style.justifyContent = 'center';
+    div.style.alignItems = 'center';
+    div.style.margin = '1em';
+    const p = createParagraph(key, index);
+    div.appendChild(p);
+}
+
+const addListener = async (color, key, event) => {
+    event.stopImmediatePropagation();
+    let divs;
+    await waitForElm(null, ['.div' + key]).then((p) => {
+        divs = Array.from(p);
+    });
+
+    for (let index = 0; index < divs.length; index++) {
+        const div = divs[index];
+        const list = Array.from(div.classList);
+        if (index === 0) {
+            toggleClass(div, Array.of('show'), '+'); // ?¿??
+        } else {
+            if (list.toString().includes('hide')) {
+                toggleClass(div, Array.of('hide'), '+');
+                toggleClass(div, Array.of('show'), '-');
+            } else {
+                toggleClass(div, Array.of('show'), '+');
+                toggleClass(div, Array.of('hide'), '-');
+            }
+        }
+        setDivProperties(div, color, key, index);
+    }
+};
+
+const setAttributes = async (elements, exists = false) => {
     let button;
 
     if (!exists) {
@@ -211,11 +187,10 @@ const setAttributes = (elements, exists = false) => {
         if (!elements.divColor) {
             elements.divColor = document.createElement('div');
         }
-        toggleClass(elements.divColor, Array.of('hide'), '*');
+        //toggleClass(elements.divColor, Array.of('hide'), '*');
     }
-    console.log('div to append: ' + elements.divColor);
     elements.container.appendChild(elements.divColor);
-    waitForElm('#button' + elements.colorsKey).then(() => {
+    await waitForElm('#button' + elements.colorsKey).then(() => {
         button.addEventListener('click', (e) => {
             addListener(elements.color, elements.colorsKey, e);
         });
@@ -228,17 +203,15 @@ const hideDivs = (divs, key) => {
             if (div.classList.toString().includes('show')) {
                 toggleClass(div, Array.of('hide'), '*');
                 toggleClass(div, Array.of('show'), '*');
-                console.log('flex');
             }
         } catch (e) {
             // wtf its happening
-            console.log('Error:\n' + e, '\ndiv:' + div);
             toggleClass(div, Array.of('hide'), '*');
             toggleClass(div, Array.of('show'), '*');
         }
     });
 };
-const addColor = event => {
+const addColor = async event => {
     event.preventDefault();
     let div, container = null;
     let exists = false;
@@ -266,13 +239,11 @@ const addColor = event => {
     if (colors[key].length >= 1) {
         exists = true;
         let divs;
-        waitForElm(null, ['.div' + key]).then((p) => {
-            divs = Array.of(p);
-            console.log('Promise resolved, divs: ' + divs);
+        await waitForElm(null, ['.div' + key]).then((p) => {
+            divs = Array.from(p);
         });
         // hide all divs to avoid weird behaviour
-        hideDivs(Array.of(divs), key); // doesn't work what a surprise'
-        console.log(Array.of(divs));
+        hideDivs(divs, key); // doesn't work what a surprise
         div = divs[0];
         container = document.getElementsByClassName('container' + key)[0];
     } else {
@@ -283,12 +254,11 @@ const addColor = event => {
 
     const elements = getElements(color, key, div, container);
 
-    setAttributes(elements, exists);
+    await setAttributes(elements, exists);
     form.reset();
-    console.log ('Color added: ' + getColor(key, colors[key].length - 1) + '\nDictionary updated: ' + JSON.stringify(colors, null, '\t'));
 };
 
-const addButtons = () => {
+const addButtons =  () => {
     const main = document.getElementById('main');
     const div = document.createElement('div')
     div.setAttribute('class', 'colors');
@@ -298,7 +268,6 @@ const addButtons = () => {
         const container = document.createElement('div');
         container.setAttribute('class', 'container' + colorsKey);
         const elements = getElements(firstColor, colorsKey, divColor, container);
-        console.log(elements);
         setAttributes(elements);
 
         main.appendChild(container);
