@@ -29,12 +29,13 @@ const hideDiv = (div, key = null) => {
     }
 }
 
-const showAllDivs = (divs, key) => {
+const showAllDivs = (divs, key = null) => {
+    console.log('show all divs' + divs);
     for (let index = 0; index < divs.length; index++) {
         showDiv(divs[index], key);
     }
 }
-const hideAllDivs = (divs, key) => {
+const hideAllDivs = (divs, key = null) => {
     for (let index = 0; index < divs.length; index++) {
         hideDiv(divs[index], key);
     }
@@ -61,7 +62,7 @@ const toggleClass = (element, classes = []) => {
             continue;
         }
 
-       element.classList.toggle(cssClass);
+       //element.classList.toggle(cssClass);
        element.classList.toggle(cssClass === show ? hide : show);
     }
 }
@@ -198,6 +199,7 @@ const setAttributes = async (elements, exists = false) => {
 
 const addColor = async event => {
     event.preventDefault();
+    event.stopImmediatePropagation();
     let div, container = null;
     let exists = false;
     const form = document.getElementById('addColor');
@@ -228,7 +230,7 @@ const addColor = async event => {
             divs = Array.from(p);
         });
         // hide all divs to avoid weird behaviour
-        //hideAllDivs(divs, key);
+        hideAllDivs(divs, key);
         div = divs[0];
         container = document.getElementsByClassName('container' + key)[0];
     } else {
@@ -244,20 +246,17 @@ const addColor = async event => {
 
 const addButtons =  async () => {
     const main = document.getElementById('main-container');
-    const mainSection = document.getElementById('main-section');
-    const div = document.createElement('div');
+    const div = document.createElement('div')
     div.setAttribute('class', 'colors');
     for (let colorsKey in colors) {
         const firstColor = colors[colorsKey][0];
         const divColor = document.createElement('div');
         const container = document.createElement('div');
         container.setAttribute('class', 'container' + colorsKey);
-        let elements = getElements(firstColor, colorsKey, divColor, container);
-        await setAttributes(elements);
-        console.log('LINE 257: ' + main, container, divColor);
-        main.appendChild(mainSection);
-        mainSection.appendChild(div);
-        div.appendChild(divColor);
+        const elements = getElements(firstColor, colorsKey, divColor, container);
+        setAttributes(elements);
+
+        main.appendChild(container);
         const form = document.getElementById('addColor');
         form.addEventListener('submit', addColor);
     }
@@ -308,6 +307,7 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b]
 const initialize = async () => {
     //add the buttons
     await addButtons();
+    console.log('Buttons added');
     let divs;
     //get all the divs no matter the color
     await waitForElm(null, ['div']).then((p) => {
@@ -315,15 +315,15 @@ const initialize = async () => {
         console.log('divs: ' + divs);
     });
 
-    //hide all divs by default
-  //  hideAllDivs(divs);
-
     //get all the containers
     let containers;
     await waitForElm(null, ['container']).then((p) => {
         containers = Array.from(p);
-        // display the containers
+        // display everything
         showAllDivs(containers);
+        showAllDivs(divs);
+        console.log('Containers: ' + containers);
+        console.log('\nDivs: ' + divs);
     });
     //add listener to buttons
     let buttons;
@@ -333,11 +333,9 @@ const initialize = async () => {
     for (let i = 0; i < buttons.length; i++) {
         const button = buttons[i];
         button.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
             await waitForElm(null, ['/div.+/']).then((p) => {
                 const allDivs = Array.from(p);
+                console.log('allDivs: ' + allDivs);
                 for (let k = 0; k < allDivs.length; k++) {
                     toggleClass(allDivs[k], ['show']);
                 }

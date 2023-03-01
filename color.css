@@ -9,7 +9,7 @@ body {
     max-height: 100%;
 }
 
-#main {
+#main-section {
     display: block;
     background-color: lightcyan;
     border-radius: 2em;
