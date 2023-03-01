@@ -48,11 +48,11 @@ const getElements = (color, key, div, container) => {
     };
 }
 
-const toggleClass = (element, classes = [], option) => {
+const toggleClass = (element, classes = []) => {
     if (!element || classes.length < 1) {
         return;
     }
-    console.log(classes, element, option);
+    console.log(classes, element);
     for (const cssClass of classes) {
         const pattern = /div.+/g;
 
@@ -60,10 +60,9 @@ const toggleClass = (element, classes = [], option) => {
             element.classList.add(cssClass);
             continue;
         }
-        if (String(option) === '*') {
-            element.classList.toggle(cssClass);
-            element.classList.toggle(cssClass === show ? hide : show);
-        }
+
+       element.classList.toggle(cssClass);
+       element.classList.toggle(cssClass === show ? hide : show);
     }
 }
 const getColor = (color, index) => {
@@ -177,7 +176,7 @@ const setAttributes = async (elements, exists = false) => {
     let button;
 
     if (!exists) {
-        toggleClass(elements.divColor, Array.of('div' + elements.colorsKey), '+');
+        toggleClass(elements.divColor, Array.of('div' + elements.colorsKey));
         button = createButton(elements.color, elements.colorsKey);
         button.addEventListener('click', (e) => {
             addListener(elements.color, elements.colorsKey, e);
@@ -229,7 +228,7 @@ const addColor = async event => {
             divs = Array.from(p);
         });
         // hide all divs to avoid weird behaviour
-        hideAllDivs(divs, key);
+        //hideAllDivs(divs, key);
         div = divs[0];
         container = document.getElementsByClassName('container' + key)[0];
     } else {
@@ -243,19 +242,22 @@ const addColor = async event => {
     form.reset();
 };
 
-const addButtons =  () => {
-    const main = document.getElementById('main');
-    const div = document.createElement('div')
+const addButtons =  async () => {
+    const main = document.getElementById('main-container');
+    const mainSection = document.getElementById('main-section');
+    const div = document.createElement('div');
     div.setAttribute('class', 'colors');
     for (let colorsKey in colors) {
         const firstColor = colors[colorsKey][0];
         const divColor = document.createElement('div');
         const container = document.createElement('div');
         container.setAttribute('class', 'container' + colorsKey);
-        const elements = getElements(firstColor, colorsKey, divColor, container);
-        setAttributes(elements);
-
-        main.appendChild(container);
+        let elements = getElements(firstColor, colorsKey, divColor, container);
+        await setAttributes(elements);
+        console.log('LINE 257: ' + main, container, divColor);
+        main.appendChild(mainSection);
+        mainSection.appendChild(div);
+        div.appendChild(divColor);
         const form = document.getElementById('addColor');
         form.addEventListener('submit', addColor);
     }
@@ -305,17 +307,24 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b]
 // start
 const initialize = async () => {
     //add the buttons
-    addButtons();
+    await addButtons();
     let divs;
     //get all the divs no matter the color
-    await waitForElm(null, ['.div']).then((p) => {
+    await waitForElm(null, ['div']).then((p) => {
         divs =  Array.from(p);
         console.log('divs: ' + divs);
     });
 
     //hide all divs by default
-    hideAllDivs(divs);
+  //  hideAllDivs(divs);
 
+    //get all the containers
+    let containers;
+    await waitForElm(null, ['container']).then((p) => {
+        containers = Array.from(p);
+        // display the containers
+        showAllDivs(containers);
+    });
     //add listener to buttons
     let buttons;
     await waitForElm(null, ['button']).then((p) => {
@@ -323,24 +332,16 @@ const initialize = async () => {
     });
     for (let i = 0; i < buttons.length; i++) {
         const button = buttons[i];
-        button.addEventListener('click', (e) => {
-            // show the divs?
-            for (let j = 0; j < divs.length; j++) {
-                const div = divs[j]
-                if (div.classList.includes('div')) {
-                    if (div.classList.length === 1) {
-                        // only color class
-                        showDiv(div);
-                    } else {
-                        // color class + show/hide
-                        if (div.classList.contains(show)) {
-                         //   showDiv(div);
-                        } else {
-                            hideDiv(div);
-                        }
-                    }
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            await waitForElm(null, ['/div.+/']).then((p) => {
+                const allDivs = Array.from(p);
+                for (let k = 0; k < allDivs.length; k++) {
+                    toggleClass(allDivs[k], ['show']);
                 }
-            }
+            })
         });
     }
 }
