@@ -175,7 +175,6 @@ const addListener = async (color, key, event) => {
 
 const setAttributes = async (elements, exists = false) => {
     let button;
-
     if (!exists) {
         toggleClass(elements.divColor, Array.of('div' + elements.colorsKey));
         button = createButton(elements.color, elements.colorsKey);
@@ -183,6 +182,7 @@ const setAttributes = async (elements, exists = false) => {
             addListener(elements.color, elements.colorsKey, e);
         });
         elements.container.appendChild(button);
+
     } else {
         if (!elements.divColor) {
             elements.divColor = document.createElement('div');
@@ -237,16 +237,17 @@ const addColor = async event => {
         div = document.createElement('div');
         container = document.createElement('div');
     }
+    container.appendChild(div);
 
     const elements = getElements(color, key, div, container);
-
+    setDivProperties(div, color, key, div.length);
     await setAttributes(elements, exists);
     form.reset();
 };
 
 const addButtons =  async () => {
-    const main = document.getElementById('main-container');
-    const div = document.createElement('div')
+    const div = document.createElement('div');
+    const section = document.getElementById('main-section');
     div.setAttribute('class', 'colors');
     for (let colorsKey in colors) {
         const firstColor = colors[colorsKey][0];
@@ -256,8 +257,13 @@ const addButtons =  async () => {
         const elements = getElements(firstColor, colorsKey, divColor, container);
         setAttributes(elements);
 
-        main.appendChild(container);
-        const form = document.getElementById('addColor');
+        section.appendChild(div);
+        section.appendChild(container);
+        div.appendChild(container);
+        let form;
+        await waitForElm('#addColor').then((f) => {
+            form = f;
+        });
         form.addEventListener('submit', addColor);
     }
 };

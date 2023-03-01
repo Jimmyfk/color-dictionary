@@ -20,6 +20,11 @@ body {
     padding: 1.3em;
 }
 
+div.colors {
+    display: flex;
+    flex-direction: column;
+}
+
 h1, h2, h3, h4, h5, form {
     font-family: sans-serif
 }
