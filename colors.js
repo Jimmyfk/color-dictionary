@@ -31,24 +31,24 @@ const hideDiv = (div, key = null) => {
     }
 };
 
-const showAllDivs = (divs, key = null) => {
-    console.log('show all divs' + JSON.stringify(divs));
-    const size = Array.from(divs).length;
+const showAllDivs = (divs, key = null, size) => {
     for (let index = 0; index < size; index++) {
         showDiv(divs[index]);
     }
 };
-const hideAllDivs = (divs, key = null) => {
-    for (let index = 0; index < divs.length; index++) {
-        hideDiv(divs[index], key);
+
+const hideAllDivs = (divs, key = null, size) => {
+    for (let index = 0; index < size; index++) {
+        hideDiv(divs[index]);
     }
 };
-const getElements = (color, key, div, container) => {
+const getElements = (color, key, div, container, lenght) => {
     return {
         color: color,
         divColor: div,
         colorsKey: key,
-        container: container
+        container: container,
+        lenght: lenght
     };
 };
 
@@ -87,10 +87,10 @@ const createButton = (color, key) => {
 };
 
 const createParagraph = (key, index = 0) => {
-    let p = document.getElementById('p' + '-' + key + '-' + (index + 1));
+    let p = document.getElementById('p-' + key + '-' + (index + 1));
     if (!p) {
         p = document.createElement('p');
-        p.id =  'p-' + key + '-' + (index + 1);
+        p.id = 'p-' + key + '-' + (index + 1);
     }
     p.innerHTML = key + '-' + (index + 1);
     p.classList.add('p-color');
@@ -132,32 +132,23 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
     });
 });
 
-const setDivProperties = (div, color, key, index) => {
-    div.style.backgroundColor = getColor(key, index);
-    div.classList.add('div-colored');
-    const p = createParagraph(key, index);
-    div.appendChild(p);
+const setDivProperties = (elements) => {
+    elements.divColor.style.backgroundColor = elements.color;
+    elements.divColor.classList.add('div-colored');
+    const p = createParagraph(elements.colorsKey, index);
+    elements.divColor.appendChild(p);
+    elements.container.appendChild(elements.divColor);
 };
 
-const addListener = (color, key, event) => {
+const addListener = (elements, event) => {
     event.stopImmediatePropagation();
-    let divs;
-    waitForElm(null, ['.div-' + key]).then((p) => {
-        divs = Array.from(p);
-        console.log('divs after waiting', JSON.stringify(divs));
-        if (!divs) {
-            console.log('NO DIVS BITCH')
-            divs = Array.of(p);
-        }
-        console.log(JSON.stringify(divs) + JSON.stringify(p));
-    });
+    const divs = document.querySelectorAll('.div-' + elements.colorsKey);
     const size = Array.from(divs).length;
     for (let index = 0; index < size; index++) {
         const div = divs[index];
         const list = Array.from(div.classList).toString();
         console.log(list);
-        setDivProperties(div, color, key, index);
-
+        setDivProperties(elements);
     }
 };
 
@@ -168,14 +159,13 @@ const setAttributes = (elements, exists = false) => {
 
         button = createButton(elements.color, elements.colorsKey);
         button.addEventListener('click', (e) => {
-            addListener(elements.color, elements.colorsKey, e);
+            addListener(elements, e);
         });
         elements.container.appendChild(button);
     }
-    elements.container.appendChild(elements.divColor);
     waitForElm('#button-' + elements.colorsKey).then(() => {
         button.addEventListener('click', (e) => {
-            addListener(elements.color, elements.colorsKey, e);
+            addListener(elements, e);
         });
     });
 };
@@ -183,7 +173,7 @@ const setAttributes = (elements, exists = false) => {
 
 const addColor = event => {
     event.preventDefault();
-    event.stopImmediatePropagation();
+
     let div, container = null;
     let exists = false;
     const form = document.getElementById('addColor');
@@ -209,26 +199,19 @@ const addColor = event => {
     // check if the color exists
     if (colors[key].length >= 1) {
         exists = true;
-        let divs;
-        waitForElm(null, ['.div-' + key]).then((p) => {
-            divs = Array.from(p);
-            if (!divs) {
-                divs = Array.of(p);
-            }
-            console.log(divs + p);
-        });
+        const divs = document.querySelectorAll('.div-' + key);
         // hide all divs to avoid weird behaviour
-        hideAllDivs(divs, key);
+        hideAllDivs(divs, key, divs.length);
         div = divs[0];
-        container = document.getElementsByClassName('container' + key)[0];
+        container = document.getElementsByClassName('container-' + key)[0];
     } else {
         div = document.createElement('div');
         container = document.createElement('div');
     }
     container.appendChild(div);
 
-    const elements = getElements(color, key, div, container);
-    setDivProperties(div, color, key, div.length);
+    const elements = getElements(color, key, div, container, (colors[key].length - 1));
+    setDivProperties(elements);
     setAttributes(elements, exists);
     form.reset();
 };
@@ -242,18 +225,14 @@ const addButtons = () => {
         const divColor = document.createElement('div');
         const container = document.createElement('div');
         container.classList.add('container-' + colorsKey);
-        const elements = getElements(firstColor, colorsKey, divColor, container);
+        const elements = getElements(firstColor, colorsKey, divColor, container, (colors[colorsKey].length - 1));
         setAttributes(elements);
 
         section.appendChild(div);
         section.appendChild(container);
         div.appendChild(container);
-        let form;
-        waitForElm('#addColor').then((f) => {
-            form = f;
-            form.addEventListener('submit', addColor);
-        });
-
+        const form = document.querySelector('#addColor')
+        form.addEventListener('submit', addColor);
     }
 };
 
@@ -302,45 +281,27 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b]
 const initialize = () => {
     //add the buttons
     addButtons();
-    console.log('Buttons added');
-    let allDivs;
-    //get all the divs no matter the color
-    waitForElm(null, ['div']).then((p) => {
-        allDivs =  Array.from(p);
-        if (!allDivs) {
-            Array.of(p)
-        }
-        console.log('divs: ' + JSON.stringify(allDivs) + p);
-    });
-
+//    every single div might be useful but probably not
+    const allDivs = document.querySelectorAll('div');
     //get all the containers
-    let containers;
-    waitForElm(null, ['container']).then((p) => {
-        containers = Array.from(p);
-        console.log('Containers: ' + containers);
-        console.log('\nDivs: ' + JSON.stringify(allDivs));
-    });
+    const containers = document.querySelectorAll('.colors > div');
+
     // display containers and divs
-    showAllDivs(containers);
-    showAllDivs(allDivs);
+    showAllDivs(containers, containers.length);
+    showAllDivs(allDivs, allDivs.length);
     //add listener to buttons
-    let buttons;
-    waitForElm(null, ['button']).then((p) => {
-        buttons =  Array.from(p);
-    });
+    const buttons = document.querySelectorAll('button');
+
     for (let i = 0; i < buttons.length; i++) {
         const button = buttons[i];
         button.addEventListener('click', (e) => {
-            waitForElm(null, ['.div-colored']).then((p) => {
-                const allDivs = Array.from(p);
-
-                for (let k = 0; k < allDivs.length; k++) {
-                    const divK = allDivs[k];
-                    hideDiv(divK);
-                    toggleClass(divK, show);
-                    toggleClass(divK, hide);
-                }
-            })
+            const divs = document.querySelectorAll('.div-colored');
+            for (let index = 0; index < divs.length; index++) {
+                const div = divs[index];
+                hideDiv(div)
+                toggleClass(show);
+                toggleClass(hide);
+            }
         });
     }
 };
