@@ -38,23 +38,23 @@ body {
     justify-content: center;
 }
 
-[class^="div"] {
-
-}
-
 button {
     height: 3em;
     padding: 1em;
     width: 5em;
     margin: 0.5em;
+    text-align: center;
+    vertical-align: middle;
 }
 
 button, .div-colored {
     border-radius: 0.5em;
+    cursor: pointer;
 }
 
 .p-color {
     font-family: Helvetica, sans-serif;
+    font-weight: bold;
 }
 
 h1, h2, h3, h4, h5, form {
@@ -62,12 +62,20 @@ h1, h2, h3, h4, h5, form {
 
 }
 
-h1 {
-    color: darkred;
+.headers {
+    background-color: lightseagreen;
+    border-radius: 1.2em;
 }
 
-h2 {
+#title {
+    color: darkred;
+    text-align: center;
+    font-size: 2em;
+}
+
+#subtitle {
     color: darkgreen;
+    margin-left: 10em;
 }
 
 form {
@@ -88,4 +96,46 @@ form {
 
 .white-text {
     color: white;
+}
+
+/* Customize the buttons */
+#button-violet {
+    background-color: #7d02c7 !important;
+    border: 2px solid #ff00dd;
+    color: #ff61dc;
+    font-weight: bold;
+}
+
+#button-blue {
+    border: 2px groove #ff0000 !important;
+    color: red;
+}
+
+#button-black {
+    border: yellow solid 2px;
+    color: white;
+}
+
+#button-white {
+    border: cyan solid 2px;
+    color: deepskyblue;
+    font-weight: bold;
+}
+
+#button-red {
+    border: fuchsia solid 2px;
+    color: white;
+}
+
+#button-green {
+    border: darkred outset 5px !important;
+    color: #ff61dc;
+}
+
+#button-violet, #button-blue,
+#button-black, #button-white,
+#button-green, #button-red {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

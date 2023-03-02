@@ -16,6 +16,7 @@ const colors = {
 const show = 'show', hide = 'hide';
 
 'use es2019';
+'use strict';
 
 const showDiv = (div, key = null) => {
     div.classList.add(show);
