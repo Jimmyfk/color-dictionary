@@ -219,7 +219,7 @@ const addColor = event => {
 
 const addButtons = () => {
     const div = document.createElement('div');
-    const formSection = document.querySelector('#form-section');
+    const formSection = document.querySelector('#button-section');
     div.classList.add('colors', 'flex-container');
     for (let colorsKey in colors) {
         const firstColor = colors[colorsKey][0];

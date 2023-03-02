@@ -7,29 +7,64 @@
         <link rel="icon" type="image/icon" href="https://64.media.tumblr.com/avatar_ae7d29b29a9d_128.pnj" />
     </head>
     <body>
-        <div id="main-container">
-            <section class="headers">
+        <main id="main-container">
+            <section id="headers">
                 <h1 id="title">Test colors</h1>
                 <h2 id="subtitle">Add color</h2>
             </section>
             <section id="form-section">
-                <header id="header">
-                    <section id="add">
-                        <form id="addColor">
-                            <label for="color">
-                                Color
-                            </label>
-                            <input id="color" type="color" value="#000000" minlength="7" />
-                            <label for="name">
-                                Name
-                            </label>
-                            <input type="text" id="name" />
-                            <input type="submit" value="Send"/>
-                        </form>
-                    </section>
-                </header>
+                <div id="div-form-section">
+                    <form id="addColor">
+                        <label for="color">
+                            Color
+                        </label>
+                        <input id="color" type="color" value="#000000" minlength="7" />
+                        <label for="name">
+                            Name
+                        </label>
+                        <input type="text" id="name" />
+                        <input type="submit" value="Send"/>
+                    </form>
+                </div>
             </section>
-        </div>
+            <section id="button-section">
+
+            </section>
+            <section id="date-section">
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <span class="month-picker" id="month-picker">August</span>
+                        <div class="year-picker">
+                            <span class="year-changer" id="prev-year">
+                                <pre></pre>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="calendar-body">
+                        <div class="calendar-week-day">
+                            <div class="calendar-day">Monday</div>
+                            <div class="calendar-day">Tuesday</div>
+                            <div class="calendar-day">Wednesday</div>
+                            <div class="calendar-day">Thursday</div>
+                            <div class="calendar-day">Friday</div>
+                            <div class="calendar-day">Saturday</div>
+                            <div class="calendar-day">Sunday</div>
+                        </div>
+                        <div class="calendar-days"></div>
+                    </div>
+                    <div class="calendar-month-list"></div>
+                </div>
+            </section>
+            <section id="time-section">
+                <time>Time test</time>
+            </section>
+            <section id="article-section">
+                <article>
+                    <p>Article Test</p>
+                </article>
+            </section>
+        </main>
     <script src="colors.js"></script>
+    <script src="calendar.js"></script>
     </body>
 </html>
