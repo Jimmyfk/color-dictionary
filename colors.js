@@ -62,7 +62,6 @@ const toggleClass = (element, classes = []) => {
             continue;
         }
 
-       //element.classList.toggle(cssClass);
        element.classList.toggle(cssClass === show ? hide : show);
     }
 }
@@ -90,24 +89,17 @@ const createButton = (color, key) => {
     checkColor(key, button);
     button.style.backgroundColor = color;
     button.innerHTML = key;
-    button.style.borderRadius = '5px';
-    button.style.padding = '5px';
-    button.style.margin = '5px';
-    button.style.height = '30px';
-    button.style.cursor = 'pointer';
-    button.style.width = '5em';
     return button;
 };
 
 const createParagraph = (key, index = 0) => {
-    let p = document.getElementById('p' + key + index);
+    let p = document.getElementById('p' + '-' + key + '-' + (index + 1));
     if (!p) {
         p = document.createElement('p');
-        p.setAttribute('id', 'p' + key + index);
+        p.id =  'p' + '-' + key + '-' + (index + 1);
     }
-    // doesn't work with new colors added to an existing key
-    p.innerHTML = key + index;
-    p.style.fontFamily = 'Helvetica, non-serif';
+    p.innerHTML = key + '-' + (index + 1);
+    p.classList.add('p-color');
 
     return p;
 };
@@ -148,13 +140,7 @@ const waitForElm = async (selector, multipleSelectors = []) => new Promise(resol
 const setDivProperties = (div, color, key, index) => {
     div.style.backgroundColor = getColor(key, index);
     checkColor(key, div);
-    div.style.borderRadius = '5px';
-    div.style.padding = '5px';
-    div.style.height = '30px';
-    div.style.cursor = 'pointer';
-    div.style.justifyContent = 'center';
-    div.style.alignItems = 'center';
-    div.style.margin = '1em';
+    div.classList.add('div-colored');
     const p = createParagraph(key, index);
     div.appendChild(p);
 }
@@ -177,6 +163,7 @@ const setAttributes = async (elements, exists = false) => {
     let button;
     if (!exists) {
         toggleClass(elements.divColor, Array.of('div' + elements.colorsKey));
+
         button = createButton(elements.color, elements.colorsKey);
         button.addEventListener('click', (e) => {
             addListener(elements.color, elements.colorsKey, e);
@@ -248,12 +235,12 @@ const addColor = async event => {
 const addButtons =  async () => {
     const div = document.createElement('div');
     const section = document.getElementById('main-section');
-    div.setAttribute('class', 'colors');
+    div.classList.add('colors', 'flex-container');
     for (let colorsKey in colors) {
         const firstColor = colors[colorsKey][0];
         const divColor = document.createElement('div');
         const container = document.createElement('div');
-        container.setAttribute('class', 'container' + colorsKey);
+        container.classList.add('container' + colorsKey);
         const elements = getElements(firstColor, colorsKey, divColor, container);
         setAttributes(elements);
 

@@ -20,9 +20,41 @@ body {
     padding: 1.3em;
 }
 
-div.colors {
+.flex-container {
     display: flex;
     flex-direction: column;
+}
+
+.flex-item {
+    flex-direction: column;
+    margin-bottom: -2.3em;
+    justify-content: center;
+    align-content: center;
+}
+
+div.div-colored {
+    margin: 3.35em 0 1em -4.35em;
+    width: 100%;
+    justify-content: center;
+}
+
+[class^="div"] {
+
+}
+
+button {
+    height: 3em;
+    padding: 1em;
+    width: 5em;
+    margin: 0.25em;
+}
+
+button, .div-colored {
+    border-radius: 0.5em;
+}
+
+.p-color {
+    font-family: Helvetica, sans-serif;
 }
 
 h1, h2, h3, h4, h5, form {
