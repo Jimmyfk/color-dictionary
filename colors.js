@@ -204,7 +204,7 @@ const addColor = event => {
         // hide all divs to avoid weird behaviour
         hideAllDivs(divs, key, divs.length);
         div = divs[0];
-        container = document.getElementsByClassName('container-' + key)[0];
+        container = document.querySelector('#container-' + key)
     } else {
         div = document.createElement('div');
         container = document.createElement('div');
@@ -225,7 +225,7 @@ const addButtons = () => {
         const firstColor = colors[colorsKey][0];
         const divColor = document.createElement('div');
         const container = document.createElement('div');
-        container.classList.add('container-' + colorsKey);
+        container.id = 'container-' + colorsKey;
         const elements = getElements(firstColor, colorsKey, divColor, container, (colors[colorsKey].length - 1));
         setAttributes(elements);
 

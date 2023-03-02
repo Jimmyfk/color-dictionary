@@ -1,3 +1,9 @@
+/*****************************************************
+    normal tag selectors
+ *****************************************************/
+
+/* wildcard to remove margin and padding */
+
 * {
     margin: 0;
     padding: 0;
@@ -12,6 +18,22 @@ h1, h2, h3, h4, h5, form {
     font-family: sans-serif;
 }
 
+button {
+    height: 3em;
+    padding: 1em;
+    width: 5em;
+    margin: 0.5em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+form {
+    color: darkblue;
+}
+
+/****************************************************************
+    id selectors
+ ****************************************************************/
 
 #main-container {
     width: 100%;
@@ -27,13 +49,13 @@ h1, h2, h3, h4, h5, form {
     margin: 0.5em 0 1em 1.5em;
 }
 
-#headers {
+#headers-section {
     background-color: lightseagreen;
     width: 102.5%;
     margin: 1em 1em 0.5em 0.85em;
 }
 
-#form-section, #headers {
+#form-section, #headers-section {
     display: block;
     border-radius: 1.2em;
     padding: 1.3em;
@@ -43,43 +65,9 @@ h1, h2, h3, h4, h5, form {
 #button-section {
     width: 50%;
     margin: auto;
-}
-
-.flex-container {
     display: flex;
-    flex-direction: column;
-}
-
-.flex-item {
-    flex-direction: column;
-    margin-bottom: -2.3em;
+    align-items: center;
     justify-content: center;
-    align-content: center;
-}
-
-.div-colored {
-    margin: 3.35em 0 1em -4.35em;
-    width: 100%;
-    justify-content: center;
-}
-
-button {
-    height: 3em;
-    padding: 1em;
-    width: 5em;
-    margin: 0.5em;
-    text-align: center;
-    vertical-align: middle;
-}
-
-button, .div-colored {
-    border-radius: 0.5em;
-    cursor: pointer;
-}
-
-.p-color {
-    font-family: Helvetica, sans-serif;
-    font-weight: bold;
 }
 
 #title {
@@ -91,26 +79,6 @@ button, .div-colored {
 #subtitle {
     color: darkgreen;
     margin-left: 10em;
-}
-
-form {
-    color: darkblue;
-}
-
-.hide {
-    display: none;
-}
-
-.show {
-    display: flex;
-}
-
-.black-text {
-    color: black;
-}
-
-.white-text {
-    color: white;
 }
 
 /* Customize the buttons */
@@ -153,4 +121,69 @@ form {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#footer {
+
+}
+
+#fuck {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+
+
+/*****************************************
+    class selectors
+ ******************************************/
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-item {
+    flex-direction: column;
+    margin-bottom: -2.3em;
+    justify-content: center;
+    align-content: center;
+}
+
+.div-colored {
+    margin: 3.35em 0 1em -4.35em;
+    width: 100%;
+    justify-content: center;
+}
+
+.p-color {
+    font-family: Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: flex;
+}
+
+.black-text {
+    color: black;
+}
+
+.white-text {
+    color: white;
+}
+
+/*********************************************************
+    combined selectors
+ *********************************************************/
+button, .div-colored {
+    border-radius: 0.5em;
+    cursor: pointer;
 }
