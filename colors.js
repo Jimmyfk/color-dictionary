@@ -219,7 +219,7 @@ const addColor = event => {
 
 const addButtons = () => {
     const div = document.createElement('div');
-    const section = document.getElementById('main-section');
+    const formSection = document.querySelector('#form-section');
     div.classList.add('colors', 'flex-container');
     for (let colorsKey in colors) {
         const firstColor = colors[colorsKey][0];
@@ -229,8 +229,8 @@ const addButtons = () => {
         const elements = getElements(firstColor, colorsKey, divColor, container, (colors[colorsKey].length - 1));
         setAttributes(elements);
 
-        section.appendChild(div);
-        section.appendChild(container);
+        formSection.appendChild(div);
+        formSection.appendChild(container);
         div.appendChild(container);
         const form = document.querySelector('#addColor')
         form.addEventListener('submit', addColor);
