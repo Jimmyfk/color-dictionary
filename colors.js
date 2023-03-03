@@ -1,10 +1,11 @@
 /*
-v2.0.0
+v2.1.0
 now each key has an array to add more colors to the same key
 todo check colors and add to existing array if it matches
  */
 const constants = {
     defaultColor: '#ffffff',
+    defaultKey: 'white',
     show: 'show',
     hide: 'hide',
     space: ' ',
@@ -16,6 +17,122 @@ const colors = {
     green: ['#00ff00'],
     blue: ['#0000ff'],
     violet: ['#ba55d3', '#7d02c7'],
+};
+
+const Element = class element {
+    color;
+    key;
+    divColor;
+    container;
+    index;
+    buttons;
+    selector;
+    length;
+    divs;
+    visible;
+
+    constructor(color, key, div, container, index, buttons, selector, length, divs, visible, ...args) {
+        if (index === undefined) {
+            index = [...div.parentElement.children].indexOf(div);
+        }
+        this.color = color === undefined ? constants.defaultColor : color;
+        this.key = key === undefined ? constants.defaultKey : key;
+        this.divColor = div === undefined ? createElement('div') : div;
+        this.container = container === undefined ? createElement('div') : container;
+        this.index = index;
+        this.buttons = (buttons === undefined || typeof(buttons) !== 'object') ? [] : buttons;
+        this.selector = selector === undefined? '' : selector;
+        this.length = length === undefined? 0 : length;
+        this.divs = divs === undefined ? [] : divs;
+        this.visible = !visible ? false : visible;
+
+        for (const arg of args) {
+           this.arg = arg;
+        }
+    };
+
+    static createEmptyObject() {
+        return new Element();
+    };
+
+    get color() {
+        return this.color;
+    };
+
+    get key() {
+        return this.key;
+    };
+
+    get divColor() {
+        return this.divColor;
+    };
+
+    get container () {
+        return this.container;
+    };
+
+    get index() {
+        return this.index;
+    };
+
+    get buttons() {
+        return this.buttons;
+    };
+
+    get all() {
+        return this;
+    };
+
+    pushButton(button) {
+        this.buttons.push(button);
+    };
+
+    set x(obj) {
+        const any = obj.key;
+        this.any = obj.value;
+    };
+};
+
+const createElement = (element, attribute, inner, parent) => {
+    if (typeof(element) === "undefined") {
+        return false;
+    }
+
+    if (typeof(inner) === "undefined") {
+        inner = "";
+    }
+
+    if (typeof(parent) === "undefined") {
+        parent = '';
+    }
+
+    const el = document.createElement(element);
+
+    if (typeof(attribute) === 'object') {
+        for (const key in attribute) {
+            el.setAttribute(key, attribute[key]);
+        }
+    }
+
+    if (!Array.isArray(inner)) {
+        inner = [inner];
+    }
+
+    for (let k = 0; k < inner.length; k++) {
+        if (inner[k].tagName) {
+            el.appendChild(inner[k]);
+        } else {
+            el.appendChild(document.createTextNode(inner[k]));
+        }
+    }
+
+    if (!!parent) {
+        if (parent.children.length === 0) {
+            parent.appendChild(el);
+        }
+    }
+
+    return el;
 };
 
 const showElem = (element) => {
@@ -43,26 +160,16 @@ const hideAllElements = (elements) => {
         hideElem(elements[index]);
     }
 };
-const getElementsObject = (color, key, div, container, index = undefined) => {
-  if (index === undefined) {
-        index = [...div.parentElement.children].indexOf(div);
-    }
-
-    return {
-        color: color,
-        divColor: div,
-        colorsKey: key,
-        container: container,
-        index: index,
-    };
-};
 
 const addClass = (element, className) => {
     if (!element) {
         return;
     }
     if (className !== constants.show && className !== constants.hide) {
-        element.classList.add(className);
+        const cClass = Array.from(className.split(' '));
+        for (let i = 0; i < cClass.length; i++) {
+            element.classList.add(cClass[i].toString());
+        }
     }
 };
 
@@ -81,10 +188,9 @@ const getColor = (key, index) => {
 
 const createButton = (elements) => {
     const button =  document.createElement('button');
-    button.id = 'button-' + elements.colorsKey + '-' + elements.index ;
+    button.id = 'button-' + elements.key + '-' + elements.index ;
     button.style.backgroundColor = elements.color;
-    button.innerHTML = elements.colorsKey + constants.space + (elements.index + 1);
-
+    button.innerHTML = elements.key + constants.space + (elements.index + 1);
     button.addEventListener('click', (e) => {
         addListener(elements, e);
     });
@@ -92,17 +198,14 @@ const createButton = (elements) => {
     return button;
 };
 
-const createParagraph = (key, index = 0) => {
-    const pId = '#p-' + key + '-' + index;
-    let p = document.querySelector(pId);
-    if (!p) {
-        p = document.createElement('p');
-        p.id = pId;
-    }
-    p.innerHTML = key + '-' + (index + 1);
-    addClass(p, 'p-color');
-
-    return p;
+const createParagraph = (elements) => {
+    const pId = '#p-' + elements.key + '-' + elements.index;
+    const attributes = {
+        'id': pId,
+        'class': 'p-color',
+    };
+    const text = 'p-' + elements.key + '-' + (elements.index + 1);
+    createElement('p', attributes, text, elements.divColor);
 };
 
 const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => {
@@ -140,38 +243,38 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
 });
 
 const setDivProperties = (elements) => {
-    elements.divColor.style.backgroundColor = elements.color;
-    elements.divColor.classList.add('div-colored');
-    elements.divColor.id = 'div-' + elements.colorsKey + '-' + elements.index;
-    const p = createParagraph(elements.colorsKey, elements.index);
-    elements.divColor.appendChild(p);
-    elements.container.appendChild(elements.divColor);
+    console.log(elements);
+    const length = elements.length;
+    for (let i = 0; i < length; i++) {
+        const div = elements.divColor[i];
+        elements.divColor.style.backgroundColor = elements.color;
+        addClass(elements.divColor, 'div-colored');
+        elements.divColor.id = 'div-' + elements.key + '-' + i;
+        createParagraph(elements);
+        elements.container.appendChild(elements.divColor);
+        hideElem(elements.divColor);
+    }
 };
 
 const addListener = (elements, event) => {
     event.stopImmediatePropagation();
-    setDivProperties(elements);
-    const target = event.target;
-    const divs = document.querySelectorAll('.div-' + elements.colorsKey);
-    const size = Array.from(divs).length;
-    for (let index = 0; index < size; index++) {
-        const div = divs[index];
-        const list = Array.from(div.classList).toString();
-        console.log(list);
-    }
+    const key = elements.key;
+    const index = elements.index;
+    const div = document.querySelector('#div-' + key + '-' + index);
+    toggleShow(div);
 };
 
 const setAttributes = (elements, exists = false) => {
     let button;
 
     if (!exists) {
-        addClass(elements.divColor, 'div-' + elements.colorsKey);
+        addClass(elements.divColor, 'div-' + elements.key);
 
         button = createButton(elements);
-
+        elements.buttons.push(button);
         elements.container.appendChild(button);
     }
-    waitForElm('#button-' + elements.colorsKey).then(() => {
+    waitForElm('#button-' + elements.key).then(() => {
         button.addEventListener('click', (e) => {
             addListener(elements, e);
         });
@@ -179,7 +282,7 @@ const setAttributes = (elements, exists = false) => {
 };
 
 
-const addColor = event => {
+const addColor = (event, elements) => {
     event.preventDefault();
     const calledBy = event.target;
     let div, container = null;
@@ -217,7 +320,6 @@ const addColor = event => {
         container = document.createElement('div');
     }
     container.appendChild(div);
-    const elements = getElementsObject(color, key, div, container);
     setDivProperties(elements);
     setAttributes(elements, exists);
     form.reset();
@@ -225,22 +327,31 @@ const addColor = event => {
 
 const addElements = () => {
     const div = document.createElement('div');
-    const divColor = document.createElement('div');
     const buttonSection = document.querySelector('#button-section');
-    div.classList.add('colors', 'flex-container');
-    for (let colorsKey in colors) {
+    addClass(div, 'colors flex-container');
+    let color, divColor, elements;
+    const divs = [];
+    for (let key in colors) {
         const container = document.createElement('div');
-        container.id = 'container-' + colorsKey;
-        for (let index = 0; index < colors[colorsKey].length; index++) {
-            const color = getColor(colorsKey, index);
-            const divColor = document.createElement('div');
-            const elements = getElementsObject(color, colorsKey, divColor, container, index);
+        container.id = 'container-' + key;
+        for (let index = 0; index < colors[key].length; index++) {
+            color = getColor(key, index);
+            divColor = document.createElement('div');
+            elements = new Element(color, key, divColor, container, index, undefined, '', colors[key].length,
+                [], false);
+            for (let i = 0; i < elements.buttons.length; i++) {
+                divs.push(createElement('div'));
+            }
+            elements.divs = divs;
+            setDivProperties(elements);
             setAttributes(elements);
         }
+
         buttonSection.appendChild(div);
         buttonSection.appendChild(container);
         div.appendChild(container);
     }
+    return elements;
 };
 
 const colorExists = (key, color) => {
@@ -253,9 +364,9 @@ const colorExists = (key, color) => {
 
 const addColorObj = (color, key) => {
     let exist = false;
-    for (let colorsKey in colors) {
+    for (let key in colors) {
         // check if the color exists
-        exist = colorExists(colorsKey, color);
+        exist = colorExists(key, color);
         if (exist) {
             break;
         }
@@ -287,33 +398,18 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b]
 // start
 const initialize = () => {
     //add elements
-    addElements();
+    const elements = addElements();
     //get all the containers
     const containers = document.querySelectorAll('.colors > div');
 
     //add the form listener
     const form = document.querySelector('#addColor');
-    form.addEventListener('submit', addColor);
+    form.addEventListener('submit', (event) => {
+        addColor(event, elements);
+    });
 
     // display containers
     showAllElements(containers);
-
-    //add listener to buttons
-    const buttons = document.querySelectorAll('button');
-    for (let i = 0; i < buttons.length; i++) {
-        const button = buttons[i];
-        const altIndex = [...button.parentElement.children].indexOf(button);
-        console.log('Iterando... Index = ' + i + '\nButton: ', button.outerHTML + '\nindexOf: ' + altIndex);
-        button.addEventListener('click', (e) => {
-            const divs = document.querySelectorAll('.div-colored');
-            for (let index = 0; index < divs.length; index++) {
-                const div = divs[index];
-                hideElem(div);
-                toggleShow(div);
-                toggleHide(div);
-            }
-        });
-    }
 };
 
 window.onload = initialize;

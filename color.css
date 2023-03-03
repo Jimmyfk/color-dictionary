@@ -96,6 +96,12 @@ form {
     font-weight: bold;
 }
 
+/* div container or other childs */
+#container-violet > div,
+#container-violet:not(button) > * {
+    border: 2px solid #ff00dd;
+}
+
 [id^="button-blue"] {
     border: 2px groove #ff0000 !important;
     color: red;
