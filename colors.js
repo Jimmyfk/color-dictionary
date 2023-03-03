@@ -19,6 +19,8 @@ const colors = {
     violet: ['#ba55d3', '#7d02c7'],
 };
 
+let colorEntries = Object.entries(colors);
+
 const Element = class element {
     color;
     key;
@@ -173,24 +175,25 @@ const addClass = (element, className) => {
     }
 };
 
-const classToggle = (el, ...args) => args.map(e => el.classList.toggle(e))
 
-const toggleShow = (element) => {element.classList.toggle(constants.show)};
-const toggleHide = (element) => {element.classList.toggle(constants.hide)};
-
-const getColor = (key, index) => {
+const getColor = (key, index, element = undefined) => {
     try {
         return colors[key][index];
     } catch (error) {
-        return constants.defaultColor;
+        try {
+            return element;
+        } catch (error) {
+            return constants.defaultColor;
+        }
     }
 };
 
 const createButton = (elements) => {
-    const button =  document.createElement('button');
-    button.id = 'button-' + elements.key + '-' + elements.index ;
-    button.style.backgroundColor = elements.color;
-    button.innerHTML = elements.key + constants.space + (elements.index + 1);
+    const button =  createElement('button', {
+        'id': 'button-' + elements.key + '-' + elements.index,
+        'style': 'background-color: ' + elements.color,
+    }, elements.key + constants.space + (elements.index + 1));
+
     button.addEventListener('click', (e) => {
         addListener(elements, e);
     });
@@ -199,13 +202,14 @@ const createButton = (elements) => {
 };
 
 const createParagraph = (elements) => {
-    const pId = '#p-' + elements.key + '-' + elements.index;
+    console.log(elements);
+    const pId = 'p-' + elements.key + '-' + elements.index;
     const attributes = {
         'id': pId,
         'class': 'p-color',
     };
     const text = 'p-' + elements.key + '-' + (elements.index + 1);
-    createElement('p', attributes, text, elements.divColor);
+    createElement('p', attributes, text, elements.divs[elements.index]);
 };
 
 const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => {
@@ -243,17 +247,14 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
 });
 
 const setDivProperties = (elements) => {
-    console.log(elements);
-    const length = elements.length;
-    for (let i = 0; i < length; i++) {
-        const div = elements.divColor[i];
-        elements.divColor.style.backgroundColor = elements.color;
-        addClass(elements.divColor, 'div-colored');
-        elements.divColor.id = 'div-' + elements.key + '-' + i;
+        const index = elements.index;
+        const div = elements.divs[index];
+        div.style.backgroundColor = elements.color;
+        addClass(div, 'div-colored ' + elements.key);
+        div.id = 'div-' + elements.key + '-' + index;
         createParagraph(elements);
-        elements.container.appendChild(elements.divColor);
-        hideElem(elements.divColor);
-    }
+        elements.container.appendChild(div);
+        hideElem(div);
 };
 
 const addListener = (elements, event) => {
@@ -261,7 +262,12 @@ const addListener = (elements, event) => {
     const key = elements.key;
     const index = elements.index;
     const div = document.querySelector('#div-' + key + '-' + index);
-    toggleShow(div);
+
+    if (div.classList.contains(constants.hide)) {
+        showElem(div);
+    } else if (div.classList.contains(constants.show)) {
+        hideElem(div);
+    }
 };
 
 const setAttributes = (elements, exists = false) => {
@@ -269,10 +275,9 @@ const setAttributes = (elements, exists = false) => {
 
     if (!exists) {
         addClass(elements.divColor, 'div-' + elements.key);
-
         button = createButton(elements);
         elements.buttons.push(button);
-        elements.container.appendChild(button);
+        elements.container.insertBefore(button, elements.container.firstChild);
     }
     waitForElm('#button-' + elements.key).then(() => {
         button.addEventListener('click', (e) => {
@@ -316,8 +321,8 @@ const addColor = (event, elements) => {
         div = divs[0];
         container = document.querySelector('#container-' + key)
     } else {
-        div = document.createElement('div');
-        container = document.createElement('div');
+        div = createElement('div');
+        container = createElement('div');
     }
     container.appendChild(div);
     setDivProperties(elements);
@@ -325,28 +330,27 @@ const addColor = (event, elements) => {
     form.reset();
 };
 
-const addElements = () => {
-    const div = document.createElement('div');
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const addElements = async () => {
+    const div = createElement('div', {'class': 'colors flex-container'});
     const buttonSection = document.querySelector('#button-section');
-    addClass(div, 'colors flex-container');
-    let color, divColor, elements;
-    const divs = [];
-    for (let key in colors) {
-        const container = document.createElement('div');
-        container.id = 'container-' + key;
+    let color, divColor, elements, container = undefined, divs;
+    for (const key in colors) {
         for (let index = 0; index < colors[key].length; index++) {
+            divs = [];
+            const divBG = createElement('div');
+            divs.push(divBG);
+            console.log('div pushed: ' + JSON.stringify(div) + '\nArray: ' + JSON.stringify(divs));
+            container = createElement('div', {'id': 'container-' + key});
             color = getColor(key, index);
-            divColor = document.createElement('div');
+            divColor = createElement('div');
             elements = new Element(color, key, divColor, container, index, undefined, '', colors[key].length,
-                [], false);
-            for (let i = 0; i < elements.buttons.length; i++) {
-                divs.push(createElement('div'));
-            }
-            elements.divs = divs;
+                divs);
+            await sleep(1000);
             setDivProperties(elements);
             setAttributes(elements);
         }
-
         buttonSection.appendChild(div);
         buttonSection.appendChild(container);
         div.appendChild(container);

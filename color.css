@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, form {
 button {
     height: 3em;
     padding: 1em;
-    width: 8em;
+    min-width: 8em;
     margin: 0.5em;
     text-align: center;
     vertical-align: middle;
