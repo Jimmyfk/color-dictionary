@@ -10,8 +10,14 @@
 }
 
 body {
+    width: 50%;
+    max-width: 50%;
+    min-height: 100vh;
+    max-height: 100vh;
+    margin: 0 auto;
     background-color: deepskyblue;
-    width: 90%;
+    display: flex;
+    flex-direction: column;
 }
 
 h1, h2, h3, h4, h5, form {
@@ -21,10 +27,12 @@ h1, h2, h3, h4, h5, form {
 button {
     height: 3em;
     padding: 1em;
-    width: 5em;
+    width: 8em;
     margin: 0.5em;
     text-align: center;
     vertical-align: middle;
+    border-radius: 0.5em;
+    cursor: pointer;
 }
 
 form {
@@ -82,42 +90,39 @@ form {
 }
 
 /* Customize the buttons */
-#button-violet {
-    background-color: #7d02c7 !important;
+[id^="button-violet"] {
     border: 2px solid #ff00dd;
     color: #ff61dc;
     font-weight: bold;
 }
 
-#button-blue {
+[id^="button-blue"] {
     border: 2px groove #ff0000 !important;
     color: red;
 }
 
-#button-black {
+[id^="button-black"] {
     border: yellow solid 2px;
     color: white;
 }
 
-#button-white {
+[id^="button-white"] {
     border: cyan solid 2px;
     color: deepskyblue;
     font-weight: bold;
 }
 
-#button-red {
+[id^="button-red"] {
     border: fuchsia solid 2px;
     color: white;
 }
 
-#button-green {
+[id^="button-green"] {
     border: darkred outset 5px !important;
     color: #ff61dc;
 }
 
-#button-violet, #button-blue,
-#button-black, #button-white,
-#button-green, #button-red {
+[id^="button-"] {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -128,14 +133,15 @@ form {
 }
 
 #fuck {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
+    margin-top: auto;
 }
 
-
+[id^="container-"] {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
 
 /*****************************************
     class selectors
@@ -144,6 +150,7 @@ form {
 .flex-container {
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .flex-item {
@@ -155,13 +162,16 @@ form {
 
 .div-colored {
     margin: 3.35em 0 1em -4.35em;
-    width: 100%;
+    width: 100% !important;
+    display: flex;
     justify-content: center;
+    border-radius: 0.2em;
+    cursor: pointer;
 }
 
 .p-color {
     font-family: Helvetica, sans-serif;
-    font-weight: bold;
+    font-size: 1em;
 }
 
 .hide {
@@ -183,7 +193,3 @@ form {
 /*********************************************************
     combined selectors
  *********************************************************/
-button, .div-colored {
-    border-radius: 0.5em;
-    cursor: pointer;
-}
