@@ -98,9 +98,8 @@ form {
     font-weight: bold;
 }
 
-/* div container or other childs */
-#div-container-violet > div,
-#div-container-violet > * {
+/* div violet */
+.violet {
     border: 2px solid #ff00dd;
     color: #ff61dc;
 }
@@ -168,14 +167,15 @@ form {
     justify-content: center;
     align-content: center;
 }
-
+/* margin top | right | bottom | left */
+/* margin top and botton, left and right */
 .div-colored {
-    margin: 3.35em 0 1em -4.35em;
-    width: 100% !important;
-    display: flex;
+    margin: 0.5em 0;
     justify-content: center;
+    align-items: center;
     border-radius: 0.2em;
     cursor: pointer;
+    height: 2em;
 }
 
 .p-color {
