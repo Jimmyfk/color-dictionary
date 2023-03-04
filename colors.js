@@ -124,6 +124,10 @@ const Element = class element {
     };
 };
 
+const insertAfter = (referenceNode, newNode) => {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
 const createElement = (element, attribute, inner, parent) => {
     if (typeof(element) === "undefined") {
         return false;
@@ -273,14 +277,17 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
     });
 });
 
-const setDivProperties = (elements) => {
+const setDivProperties = (elements, comesFromForm = false) => {
     const index = elements.index;
     const div = elements.divs[index];
-    div.style.backgroundColor = elements.color;
-    addClass(div, 'div-colored ' + elements.key);
-    div.id = 'div-' + elements.key + '-' + index;
+    if (!comesFromForm) {
+        addClass(div, 'div-colored ' + elements.key);
+        div.id = 'div-' + elements.key + '-' + index;
+        hideElem(div);
+        div.style.backgroundColor = elements.color;
+    }
+
     createParagraph(elements);
-    hideElem(div);
 };
 
 const addListener = (elements, event) => {
@@ -297,14 +304,17 @@ const addListener = (elements, event) => {
 };
 
 const setAttributes = (elements, exists = false) => {
-    let button;
+    const button = createButton(elements);
+    elements.buttons.push(button);
+    const lastButton = document.querySelector('#button-' + elements.key + '-' + (elements.index - 1));
 
-    if (!exists) {
-        button = createButton(elements);
-        elements.buttons.push(button);
+    if (!lastButton) {
         elements.buttonContainer.appendChild(button);
+    } else {
+        insertAfter(lastButton, button);
     }
-    waitForElm('#button-' + elements.key).then(() => {
+
+    waitForElm('#button-' + elements.key + '-' + elements.index).then(() => {
         button.addEventListener('click', (e) => {
             addListener(elements, e);
         });
@@ -312,12 +322,16 @@ const setAttributes = (elements, exists = false) => {
 };
 
 
-const addColor = (event, elements) => {
+const addColor = (event) => {
     event.preventDefault();
-    const calledBy = event.target;
-    let div, container = null;
+    const bContainer = document.querySelector('.buttons.flex-container');
+    const dContainer = document.querySelector('.divs.flex-container');
+    if (!bContainer || !dContainer) {
+        return;
+    }
     let exists = false;
     const form = document.querySelector('#addColor');
+
     // todo add constraints
     if (!form.checkValidity()) {
         form.reset();
@@ -336,21 +350,28 @@ const addColor = (event, elements) => {
         form.reset();
         return;
     }
+    const index = colors[key].length - 1;
+
+    const div = createElement('div', {
+        'id': 'div-' + key + '-' + index,
+        'class': 'div-colored ' + key + ' hide',
+        'style': 'background-color: ' + color,
+    });
 
     // check if the color exists
     if (colors[key].length >= 1) {
         exists = true;
-        const divs = document.querySelectorAll('.div-' + key);
+        const divs = document.querySelectorAll('.div-colored.show' + key);
         // hide all divs to avoid weird behaviour
         hideAllElements(divs);
-        div = divs[0];
-        container = document.querySelector('#container-' + key)
-    } else {
-        div = createElement('div');
-        container = createElement('div');
     }
-    container.appendChild(div);
-    setDivProperties(elements);
+    const divs = document.querySelectorAll('div .' + key);
+    const last = divs[divs.length - 1];
+
+    insertAfter(last, div);
+    const elements = Element.createFullElement(color, key, div, bContainer, dContainer, null, index);
+    elements.divs[index] = div;
+    setDivProperties(elements, true);
     setAttributes(elements, exists);
     form.reset();
 };
@@ -435,7 +456,7 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b]
 // start
 const initialize = () => {
     //add elements
-    const elements = addElements();
+    addElements();
     // get containers
     const bContainers = document.querySelectorAll('.button-container');
     const dContainers = document.querySelectorAll('.div-container');
@@ -443,7 +464,7 @@ const initialize = () => {
     //add the form listener
     const form = document.querySelector('#addColor');
     form.addEventListener('submit', (event) => {
-        addColor(event, elements);
+        addColor(event);
     });
 
     // display containers
