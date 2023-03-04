@@ -1,6 +1,7 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+<<<<<<< HEAD
     <inspection_tool class="CssUnknownProperty" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myCustomPropertiesEnabled" value="true" />
       <option name="myIgnoreVendorSpecificProperties" value="false" />
@@ -12,6 +13,8 @@
         </value>
       </option>
     </inspection_tool>
+=======
+>>>>>>> d014ccedc1021ebddea3920c1e4176832c3001b8
     <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="WARNING" enabled_by_default="true" />
   </profile>
 </component>
