@@ -97,9 +97,10 @@ form {
 }
 
 /* div container or other childs */
-#container-violet > div,
-#container-violet:not(button) > * {
+#div-container-violet > div,
+#div-container-violet > * {
     border: 2px solid #ff00dd;
+    color: #ff61dc;
 }
 
 [id^="button-blue"] {

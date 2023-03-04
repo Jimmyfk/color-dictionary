@@ -13,7 +13,7 @@ const constants = {
 const colors = {
     white: [constants.defaultColor],
     black: ['#000000'],
-    red: ['#ff0000'],
+    red: ['#ff0000', 'darkred', 'crimson'],
     green: ['#00ff00'],
     blue: ['#0000ff'],
     violet: ['#ba55d3', '#7d02c7'],
@@ -269,11 +269,12 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
 const setDivProperties = (elements) => {
         const index = elements.index;
         const div = elements.divs[index];
+        const container = elements.containers[1];
         div.style.backgroundColor = elements.color;
         addClass(div, 'div-colored ' + elements.key);
         div.id = 'div-' + elements.key + '-' + index;
         createParagraph(elements);
-        elements.containers[1].appendChild(div);
+        container.appendChild(div);
         hideElem(div);
 };
 
@@ -363,28 +364,30 @@ const createDivs = (elements) => {
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const addElements = () => {
-    const div = createElement('div', {'class': 'buttons flex-container'});
+    const divB = createElement('div', {'class': 'buttons flex-container'});
+    const divD = createElement('div', {'class': 'divs flex-container'});
     const buttonSection = document.querySelector('#button-section');
+    buttonSection.appendChild(divB);
     const colorSection = document.querySelector('#div-section');
+    colorSection.appendChild(divD);
     let color, divColor, elements, container = undefined, divContainer;
     for (const key in colors) {
         for (let index = 0; index < colors[key].length; index++) {
-            container = createElement('div', {'id': 'button-container-' + key,
+            console.log('looping key: ' + key + ' index: ' + index);
+            container = createElement('div', {'id': 'button-container-' + key + '-' + index,
             'class': 'button-container'});
-            divContainer = createElement('div', {'id': 'div-container-' + key,
+            divContainer = createElement('div', {'id': 'div-container-' + key + '-' + index,
             'class': 'div-container'});
             color = getColor(key, index);
             divColor = createElement('div');
-            elements = new Element(color, key, div, container, divContainer, null, index, undefined, '', colors[key].length, undefined, false,
+            elements = new Element(color, key, divB, container, divContainer, null, index, undefined, '', colors[key].length, undefined, false,
                 buttonSection, colorSection);
             createDivs(elements);
             setDivProperties(elements);
             setAttributes(elements);
+            divB.appendChild(container);
+            divD.appendChild(divContainer);
         }
-        colorSection.appendChild(divContainer);
-        buttonSection.appendChild(div);
-        buttonSection.appendChild(container);
-        div.appendChild(container);
     }
     return elements;
 };
