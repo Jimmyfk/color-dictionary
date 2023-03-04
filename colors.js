@@ -231,7 +231,6 @@ const createButton = (elements) => {
 };
 
 const createParagraph = (elements) => {
-    console.log(elements);
     const pId = 'p-' + elements.key + '-' + elements.index;
     const attributes = {
         'id': pId,
@@ -251,7 +250,6 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
     let mSelector;
     if (multipleSelectors && multipleSelectors.length > 0) {
         mSelector = multipleSelectors.join(' ');
-        console.log(mSelector, multipleSelectors);
         if (document.querySelectorAll(mSelector)) {
             return resolve(document.querySelectorAll(mSelector));
         }
@@ -276,7 +274,6 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
 });
 
 const setDivProperties = (elements) => {
-    console.log(elements);
     const index = elements.index;
     const div = elements.divs[index];
     div.style.backgroundColor = elements.color;
