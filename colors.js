@@ -25,7 +25,9 @@ const Element = class element {
     color;
     key;
     divColor;
-    container;
+    buttonContainer;
+    divContainer;
+    containers;
     index;
     buttons;
     selector;
@@ -33,14 +35,16 @@ const Element = class element {
     divs;
     visible;
 
-    constructor(color, key, div, container, index, buttons, selector, length, divs, visible, ...args) {
+    constructor(color, key, div,bContainer, dContainer, containers, index, buttons, selector, length, divs, visible, ...args) {
         if (index === undefined) {
             index = [...div.parentElement.children].indexOf(div);
         }
         this.color = color === undefined ? constants.defaultColor : color;
         this.key = key === undefined ? constants.defaultKey : key;
         this.divColor = div === undefined ? createElement('div') : div;
-        this.container = container === undefined ? createElement('div') : container;
+        this.buttonContainer = bContainer === undefined ? createElement('div') : bContainer;
+        this.divContainer = dContainer === undefined ? createElement('div') : dContainer;
+        this.containers = !!this.buttonContainer && !!this.divContainer  ? Array.of(bContainer, dContainer) : [createElement('div'), createElement('div')];
         this.index = index;
         this.buttons = (buttons === undefined || typeof(buttons) !== 'object') ? [] : buttons;
         this.selector = selector === undefined? '' : selector;
@@ -57,6 +61,14 @@ const Element = class element {
         return new Element();
     };
 
+    static createElementDiv(divs) {
+        return new Element(divs);
+    };
+
+    static createFullElement(color, key, div, bContainer, dContainer, container, index, buttons, selector, length, divs, visible,...args) {
+      return new Element(color, key, div,bContainer, dContainer, container, index, buttons, selector, length, divs, visible,...args);
+    };
+
     get color() {
         return this.color;
     };
@@ -69,8 +81,8 @@ const Element = class element {
         return this.divColor;
     };
 
-    get container () {
-        return this.container;
+    get containers () {
+        return this.containers;
     };
 
     get index() {
@@ -79,6 +91,14 @@ const Element = class element {
 
     get buttons() {
         return this.buttons;
+    };
+
+    get selector() {
+        return this.selector;
+    };
+
+    get divs() {
+        return this.divs;
     };
 
     get all() {
@@ -253,7 +273,7 @@ const setDivProperties = (elements) => {
         addClass(div, 'div-colored ' + elements.key);
         div.id = 'div-' + elements.key + '-' + index;
         createParagraph(elements);
-        elements.container.appendChild(div);
+        elements.containers[1].appendChild(div);
         hideElem(div);
 };
 
@@ -274,10 +294,9 @@ const setAttributes = (elements, exists = false) => {
     let button;
 
     if (!exists) {
-        addClass(elements.divColor, 'div-' + elements.key);
         button = createButton(elements);
         elements.buttons.push(button);
-        elements.container.insertBefore(button, elements.container.firstChild);
+        elements.buttonContainer.appendChild(button);
     }
     waitForElm('#button-' + elements.key).then(() => {
         button.addEventListener('click', (e) => {
@@ -330,27 +349,39 @@ const addColor = (event, elements) => {
     form.reset();
 };
 
+const createDivs = (elements) => {
+    const container = elements.divContainer;
+    const index = elements.index;
+    const div = createElement('div', {
+        'id': + 'div-' + elements.key + '-' + index,
+        'class': 'div-colored ' + elements.key,
+    });
+    elements.divs[index] = div;
+    container.appendChild(div);
+}
+
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const addElements = async () => {
-    const div = createElement('div', {'class': 'colors flex-container'});
+const addElements = () => {
+    const div = createElement('div', {'class': 'buttons flex-container'});
     const buttonSection = document.querySelector('#button-section');
-    let color, divColor, elements, container = undefined, divs;
+    const colorSection = document.querySelector('#div-section');
+    let color, divColor, elements, container = undefined, divContainer;
     for (const key in colors) {
         for (let index = 0; index < colors[key].length; index++) {
-            divs = [];
-            const divBG = createElement('div');
-            divs.push(divBG);
-            console.log('div pushed: ' + JSON.stringify(div) + '\nArray: ' + JSON.stringify(divs));
-            container = createElement('div', {'id': 'container-' + key});
+            container = createElement('div', {'id': 'button-container-' + key,
+            'class': 'button-container'});
+            divContainer = createElement('div', {'id': 'div-container-' + key,
+            'class': 'div-container'});
             color = getColor(key, index);
             divColor = createElement('div');
-            elements = new Element(color, key, divColor, container, index, undefined, '', colors[key].length,
-                divs);
-            await sleep(1000);
+            elements = new Element(color, key, div, container, divContainer, null, index, undefined, '', colors[key].length, undefined, false,
+                buttonSection, colorSection);
+            createDivs(elements);
             setDivProperties(elements);
             setAttributes(elements);
         }
+        colorSection.appendChild(divContainer);
         buttonSection.appendChild(div);
         buttonSection.appendChild(container);
         div.appendChild(container);
@@ -403,8 +434,9 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b]
 const initialize = () => {
     //add elements
     const elements = addElements();
-    //get all the containers
-    const containers = document.querySelectorAll('.colors > div');
+    // get containers
+    const bContainers = document.querySelectorAll('.button-container');
+    const dContainers = document.querySelectorAll('.div-container');
 
     //add the form listener
     const form = document.querySelector('#addColor');
@@ -413,7 +445,8 @@ const initialize = () => {
     });
 
     // display containers
-    showAllElements(containers);
+    showAllElements(bContainers);
+    showAllElements(dContainers);
 };
 
 window.onload = initialize;
