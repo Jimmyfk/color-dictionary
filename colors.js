@@ -1,5 +1,5 @@
 /*
-v2.1.0
+v2.1.1
 now each key has an array to add more colors to the same key
 todo check colors and add to existing array if it matches
  */

@@ -6,6 +6,7 @@
         <link rel="stylesheet" type="text/css" href="color.css">
         <link rel="icon" type="image/icon" href="https://64.media.tumblr.com/avatar_ae7d29b29a9d_128.pnj" />
         <script src="colors.js"></script>
+        <script src="validator.js"></script>
     </head>
     <body>
         <main id="main-container">
@@ -22,11 +23,11 @@
                         <label for="color">
                             Color
                         </label>
-                        <input id="color" type="color" value="#000000" minlength="7" />
+                        <input id="color" type="color" value="#000000" required />
                         <label for="name">
                             Name
                         </label>
-                        <input type="text" id="name" />
+                        <input type="text" id="name" required />
                         <input type="submit" value="Send"/>
                     </form>
                 </div>
