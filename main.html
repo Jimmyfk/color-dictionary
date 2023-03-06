@@ -5,6 +5,7 @@
         <title>Test colors</title>
         <link rel="stylesheet" type="text/css" href="color.css">
         <link rel="icon" type="image/icon" href="https://64.media.tumblr.com/avatar_ae7d29b29a9d_128.pnj" />
+        <script src="classes.js"></script>
         <script src="colors.js"></script>
         <script src="validator.js"></script>
     </head>
@@ -15,10 +16,10 @@
             </header>
             <section id="headers-section">
                 <h1 id="title">Test colors</h1>
-                <h2 id="subtitle">Add color</h2>
             </section>
             <section id="form-section">
-                <div id="div-form-section">
+                <fieldset form="addColor">
+                    <legend>Add color</legend>
                     <form id="addColor">
                         <label for="color">
                             Color
@@ -30,7 +31,7 @@
                         <input type="text" id="name" required />
                         <input type="submit" value="Send"/>
                     </form>
-                </div>
+                </fieldset>
             </section>
             <section id="button-section">
 
