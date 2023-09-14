@@ -4,6 +4,6 @@
 
 ### Feel free to contribute making a fork but remember this its to code for learning, experimenting with new techniques and fun mostly
 
-### If you want to contribute the only thing you have to do its respect the naming convention 
+### If you want to contribute do whatever you want
 
 Thanks for reading
