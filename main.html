@@ -5,7 +5,9 @@
         <title>Test colors</title>
         <link rel="stylesheet" type="text/css" href="color.css">
         <link rel="icon" type="image/icon" href="https://64.media.tumblr.com/avatar_ae7d29b29a9d_128.pnj" />
+        <script src="classes.js"></script>
         <script src="colors.js"></script>
+        <script src="validator.js"></script>
     </head>
     <body>
         <main id="main-container">
@@ -14,35 +16,31 @@
             </header>
             <section id="headers-section">
                 <h1 id="title">Test colors</h1>
-                <h2 id="subtitle">Add color</h2>
             </section>
             <section id="form-section">
-                <div id="div-form-section">
+                <fieldset form="addColor">
+                    <legend>Add color</legend>
                     <form id="addColor">
-                        <label for="color">
-                            Color
-                        </label>
-                        <input id="color" type="color" value="#000000" minlength="7" />
-                        <label for="name">
+                        <div class="color-input-div">
+                            <label for="color">
+                            Choose color
+                            </label>
+                            <input id="color" type="color" value="#000000" required />
+                        </div>
+                        <div class="name-input-div">
+                            <label for="name">
                             Name
-                        </label>
-                        <input type="text" id="name" />
-                        <input type="submit" value="Send"/>
+                            </label>
+                            <input type="text" id="name" required />
+                            <input type="submit" value="Send" id="submit"/>
+                        </div>
                     </form>
-                </div>
+                </fieldset>
             </section>
             <section id="button-section">
-
             </section>
             <section id="div-section">
             </section>
-            <section id="time-section">
-                <time>Time test</time>
-            </section>
-            <section id="article-section">
-                <article>
-                    <p>Article Test</p>
-                </article>
             </section>
             <footer id="footer">
                 <h1 id="fuck">FUCK JAVASCRIPT</h1>

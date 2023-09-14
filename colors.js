@@ -1,5 +1,5 @@
 /*
-v2.1.0
+v2.1.1
 now each key has an array to add more colors to the same key
 todo check colors and add to existing array if it matches
  */
@@ -29,100 +29,6 @@ const data = {
 }
 
 let colorEntries = Object.entries(colors);
-
-const Element = class element {
-    color;
-    key;
-    divColor;
-    buttonContainer;
-    divContainer;
-    containers;
-    index;
-    buttons;
-    selector;
-    length;
-    divs;
-    visible;
-
-    constructor(color, key, div,bContainer, dContainer, containers, index, buttons, selector, length, divs, visible, ...args) {
-        if (index === undefined) {
-            index = [...div.parentElement.children].indexOf(div);
-        }
-        this.color = color === undefined ? constants.defaultColor : color;
-        this.key = key === undefined ? constants.defaultKey : key;
-        this.divColor = div === undefined ? createElement('div') : div;
-        this.buttonContainer = bContainer === undefined ? createElement('div') : bContainer;
-        this.divContainer = dContainer === undefined ? createElement('div') : dContainer;
-        this.containers = !!this.buttonContainer && !!this.divContainer  ? Array.of(bContainer, dContainer) : [createElement('div'), createElement('div')];
-        this.index = index;
-        this.buttons = (buttons === undefined || typeof(buttons) !== 'object') ? [] : buttons;
-        this.selector = selector === undefined? '' : selector;
-        this.length = length === undefined? 0 : length;
-        this.divs = divs === undefined ? [] : divs;
-        this.visible = !visible ? false : visible;
-
-        for (const arg of args) {
-           this.arg = arg;
-        }
-    };
-
-    static createEmptyObject() {
-        return new Element();
-    };
-
-    static createElementDiv(divs) {
-        return new Element(divs);
-    };
-
-    static createFullElement(color, key, div, bContainer, dContainer, container, index, buttons, selector, length, divs, visible,...args) {
-      return new Element(color, key, div,bContainer, dContainer, container, index, buttons, selector, length, divs, visible,...args);
-    };
-
-    get color() {
-        return this.color;
-    };
-
-    get key() {
-        return this.key;
-    };
-
-    get divColor() {
-        return this.divColor;
-    };
-
-    get containers () {
-        return this.containers;
-    };
-
-    get index() {
-        return this.index;
-    };
-
-    get buttons() {
-        return this.buttons;
-    };
-
-    get selector() {
-        return this.selector;
-    };
-
-    get divs() {
-        return this.divs;
-    };
-
-    get all() {
-        return this;
-    };
-
-    pushButton(button) {
-        this.buttons.push(button);
-    };
-
-    set x(obj) {
-        const any = obj.key;
-        this.any = obj.value;
-    };
-};
 
 const insertAfter = (referenceNode, newNode) => {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
@@ -240,7 +146,7 @@ const createParagraph = (elements) => {
         'id': pId,
         'class': 'p-color',
     };
-    const text = 'p-' + elements.key + '-' + (elements.index + 1);
+    const text = elements.key + ' ' + (elements.index + 1);
     createElement('p', attributes, text, elements.divs[elements.index]);
 };
 
@@ -369,7 +275,8 @@ const addColor = (event) => {
     const last = divs[divs.length - 1];
 
     insertAfter(last, div);
-    const elements = Element.createFullElement(color, key, div, bContainer, dContainer, null, index);
+    const elements = CustomElement.createFullElement(color, key, div, bContainer, dContainer, null, index);
+    data[key].push(elements);
     elements.divs[index] = div;
     setDivProperties(elements, true);
     setAttributes(elements, exists);
@@ -401,7 +308,7 @@ const addElements = () => {
         for (let index = 0; index < colors[key].length; index++) {
             color = getColor(key, index);
             divColor = createElement('div');
-            elements = new Element(color, key, divColor, divB, divD, null, index, undefined, '', colors[key].length, undefined, false,
+            elements = CustomElement.createFullElement(color, key, divColor, divB, divD, null, index, undefined, '', colors[key].length, undefined, false,
                 buttonSection, colorSection);
             data[key].push(elements);
             createDivs(elements);
@@ -468,8 +375,7 @@ const initialize = () => {
     });
 
     // display containers
-    showAllElements(bContainers);
-    showAllElements(dContainers);
+    showAllElements([bContainers, dContainers]);
 };
 
 window.onload = initialize;
