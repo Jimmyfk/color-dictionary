@@ -146,7 +146,7 @@ const createParagraph = (elements) => {
         'id': pId,
         'class': 'p-color',
     };
-    const text = 'p-' + elements.key + '-' + (elements.index + 1);
+    const text = elements.key + ' ' + (elements.index + 1);
     createElement('p', attributes, text, elements.divs[elements.index]);
 };
 
@@ -375,8 +375,7 @@ const initialize = () => {
     });
 
     // display containers
-    showAllElements(bContainers);
-    showAllElements(dContainers);
+    showAllElements([bContainers, dContainers]);
 };
 
 window.onload = initialize;

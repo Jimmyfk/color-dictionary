@@ -41,6 +41,38 @@ form {
     color: darkblue;
 }
 
+legend {
+    font-family: Helvetica, sans-serif;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.5em;
+    color: orangered;
+}
+
+fieldset {
+    margin-top: 1.3em;
+    border-radius: 1em;
+    background-color: lightskyblue;
+    height: 100%;
+    padding: 0.65em;
+    vertical-align: middle;
+}
+
+fieldset label,
+fieldset input {
+    zoom: 1.0;
+    margin: 0.2em 0;
+}
+
+fieldset label {
+
+}
+
+fieldset input {
+
+}
+
 /****************************************************************
     id selectors
  ****************************************************************/
@@ -53,10 +85,10 @@ form {
 }
 
 #form-section {
-    background-color: lightcyan;
     height: 100%;
     max-height: 150%;
-    margin: 0.5em 0 1em 1.5em;
+    margin: 1em 0 1em 1.5em;
+    text-align: center;
 }
 
 #headers-section {
@@ -104,6 +136,10 @@ form {
     color: #ff61dc;
 }
 
+.black {
+    color: white;
+}
+
 [id^="button-blue"] {
     border: 2px groove #ff0000 !important;
     color: red;
@@ -136,12 +172,30 @@ form {
     align-items: center;
 }
 
+
+#submit {
+    width: 3.5em;
+    margin-left: 0.5em;
+}
+
+
 #footer {
 
 }
 
 #fuck {
     margin-top: auto;
+    text-align: center;
+    color: fuchsia;
+    margin-top: 2em;
+}
+
+#color {
+
+}
+
+#name {
+
 }
 
 [id^="container-"] {
@@ -191,12 +245,25 @@ form {
     display: flex;
 }
 
+.white-text {
+    color: white;
+}
+
 .black-text {
     color: black;
 }
 
-.white-text {
-    color: white;
+.color-input-div label, .name-input-div label {
+    margin-right: 0.33em;
+}
+
+.color-input-div {
+    margin-bottom: 1.5em;
+}
+
+.name-input-div {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
 }
 
 /*********************************************************
