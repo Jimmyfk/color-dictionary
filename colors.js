@@ -102,6 +102,11 @@ const hideAllElements = (elements) => {
     }
 };
 
+const collapseColoredDivs = () => {
+    const divs = document.querySelectorAll('.div-colored');
+    hideAllElements(divs);
+};
+
 const addClass = (element, className) => {
     if (!element) {
         return;
@@ -367,6 +372,11 @@ const initialize = () => {
     // get containers
     const bContainers = document.querySelectorAll('.button-container');
     const dContainers = document.querySelectorAll('.div-container');
+
+    const collapseButton = document.querySelector('#collapse-button');
+    collapseButton.addEventListener('click', (event) => {
+        collapseColoredDivs();
+    });
 
     //add the form listener
     const form = document.querySelector('#addColor');

@@ -87,21 +87,33 @@ fieldset input {
 #form-section {
     height: 100%;
     max-height: 150%;
-    margin: 1em 0 1em 1.5em;
+    margin: -1.25em 0 1em 1.5em;
     text-align: center;
 }
 
 #headers-section {
     background-color: lightseagreen;
-    width: 102.5%;
     margin: 1em 1em 0.5em 0.85em;
 }
 
-#form-section, #headers-section {
+#form-section, #headers-section, .container-width {
     display: block;
     border-radius: 1.2em;
-    padding: 1.3em;
+    padding: 0.3em;
     width: 100%;
+}
+
+#button-section {
+    width: 30%;
+}
+
+#div-section {
+    width: 80%;
+}
+
+#section-container {
+    display: flex;
+    flex-direction: row;
 }
 
 #button-section > div {
@@ -190,6 +202,11 @@ fieldset input {
     margin-top: 2em;
 }
 
+#header {
+    text-align: center;
+    color: midnightblue;
+}
+
 #color {
 
 }
@@ -224,12 +241,12 @@ fieldset input {
 /* margin top | right | bottom | left */
 /* margin top and botton, left and right */
 .div-colored {
-    margin: 0.5em 0;
+    margin: 0.5em;
     justify-content: center;
     align-items: center;
-    border-radius: 0.2em;
+    border-radius: 0.5em;
     cursor: pointer;
-    height: 2em;
+    height: 2.5em;
 }
 
 .p-color {
@@ -264,6 +281,11 @@ fieldset input {
 .name-input-div {
     margin-top: 1.5em;
     margin-bottom: 0.5em;
+}
+
+.collapse-div {
+    padding: 0;
+    text-align: center;
 }
 
 /*********************************************************
