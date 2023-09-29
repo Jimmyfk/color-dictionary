@@ -105,10 +105,12 @@ fieldset input {
 
 #button-section {
     width: 30%;
+    height: 2em;
 }
 
 #div-section {
     width: 80%;
+    height: 2em;
 }
 
 #section-container {
@@ -196,10 +198,9 @@ fieldset input {
 }
 
 #fuck {
-    margin-top: auto;
+    margin-top: 60%;
     text-align: center;
     color: fuchsia;
-    margin-top: 2em;
 }
 
 #header {
@@ -255,7 +256,7 @@ fieldset input {
 }
 
 .hide {
-    display: none;
+    visibility: hidden;
 }
 
 .show {
