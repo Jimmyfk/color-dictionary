@@ -25,16 +25,7 @@ h1, h2, h3, h4, h5, form {
 }
 
 button {
-    height: 3em;
-    padding: 1em;
-    min-width: 4em;
-    width: 8em;
-    max-width: 8em;
-    margin: 0.5em;
-    text-align: center;
-    vertical-align: middle;
-    border-radius: 0.5em;
-    cursor: pointer;
+    
 }
 
 form {
@@ -113,6 +104,13 @@ fieldset input {
     height: 2em;
 }
 
+#button-section, #div-section {
+    display: flex;
+    gap: 0 2em;
+    height: 100%;
+    margin: .5em;
+}
+
 #section-container {
     display: flex;
     flex-direction: row;
@@ -123,7 +121,6 @@ fieldset input {
     margin: auto;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 #title {
@@ -135,6 +132,10 @@ fieldset input {
 #subtitle {
     color: darkgreen;
     margin-left: 10em;
+}
+
+#collapse-button {
+   
 }
 
 /* Customize the buttons */
@@ -155,28 +156,23 @@ fieldset input {
 }
 
 [id^="button-blue"] {
-    border: 2px groove #ff0000 !important;
     color: red;
 }
 
 [id^="button-black"] {
-    border: yellow solid 2px;
     color: white;
 }
 
 [id^="button-white"] {
-    border: cyan solid 2px;
     color: deepskyblue;
     font-weight: bold;
 }
 
 [id^="button-red"] {
-    border: fuchsia solid 2px;
     color: white;
 }
 
 [id^="button-green"] {
-    border: darkred outset 5px !important;
     color: #ff61dc;
 }
 
@@ -201,6 +197,7 @@ fieldset input {
     margin-top: 60%;
     text-align: center;
     color: fuchsia;
+    position: sticky;
 }
 
 #header {
@@ -233,25 +230,32 @@ fieldset input {
     width: 100%;
 }
 
-.flex-item {
-    flex-direction: column;
-    margin-bottom: -2.3em;
-    justify-content: center;
-    align-content: center;
 }
 /* margin top | right | bottom | left */
 /* margin top and botton, left and right */
 .div-colored {
-    margin: 0.5em;
-    justify-content: center;
-    align-items: center;
     border-radius: 0.5em;
     cursor: pointer;
+}
+
+.color-button {
+    width: 8em;
+    cursor: pointer;
+    border: 0;
+    box-sizing: content-box;
+    padding: 0;
+}
+
+.div-colored, .color-button {
     height: 2.5em;
+    border-radius: 0.5em;
+    justify-content: space-between;
+    align-items: center;
+    margin: .5em;
 }
 
 .p-color {
-    font-family: Helvetica, sans-serif;
+    font-family: Arial, sans-serif;
     font-size: 1em;
 }
 
@@ -287,6 +291,15 @@ fieldset input {
 .collapse-div {
     padding: 0;
     text-align: center;
+}
+
+.align-color-divs {
+
+}
+
+.collapse-div {
+    position: relative;
+    bottom: 1em;
 }
 
 /*********************************************************
