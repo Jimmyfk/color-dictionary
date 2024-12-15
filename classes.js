@@ -13,16 +13,14 @@ const CustomElement = class Element {
     #divs;
     #visible;
 
-    constructor(color, key, div,bContainer, dContainer, containers, index, buttons, selector, length, divs, visible, ...args) {
+    constructor(color, key, div, container, index, buttons, selector, length, divs, visible, ...args) {
         if (index === undefined) {
             index = [...div.parentElement.children].indexOf(div);
         }
         this.#color = color === undefined ? constants.defaultColor : color;
         this.#key = key === undefined ? constants.defaultKey : key;
         this.#divColor = div === undefined ? Element.#newElement('div') : div;
-        this.#buttonContainer = bContainer === undefined ? Element.#newElement('div') : bContainer;
-        this.#divContainer = dContainer === undefined ? Element.#newElement('div') : dContainer;
-        this.#containers = !!this.#buttonContainer && !!this.#divContainer  ? Array.of(bContainer, dContainer) : [Element.#newElement('div'), Element.#newElement('div')];
+        this.container = container === undefined ? Element.#newElement('div') : container;
         this.#index = index;
         this.#buttons = (buttons === undefined || typeof(buttons) !== 'object') ? [] : buttons;
         this.#selector = selector === undefined? '' : selector;
@@ -39,8 +37,8 @@ const CustomElement = class Element {
         return new Element(divs);
     };
 
-    static createFullElement(color, key, div, bContainer, dContainer, container, index, buttons, selector, length, divs, visible,...args) {
-        return new Element(color, key, div, bContainer, dContainer, container, index, buttons, selector, length, divs, visible,...args);
+    static createFullElement(color, key, div, container, index, buttons, selector, length, divs, visible, ...args) {
+        return new Element(color, key, div, container, index, buttons, selector, length, divs, visible, ...args);
     };
 
     get color() {

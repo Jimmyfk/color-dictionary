@@ -73,6 +73,10 @@ fieldset input {
 
 }
 
+tbody {
+    display: flex;
+}
+
 /****************************************************************
     id selectors
  ****************************************************************/
@@ -114,7 +118,7 @@ fieldset input {
 }
 
 #section-container {
-    display: flex;
+    display: grid;
     flex-direction: row;
 }
 

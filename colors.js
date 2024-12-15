@@ -77,28 +77,41 @@ const createElement = (element, attribute, inner, parent) => {
 };
 
 const showElem = (element) => {
-    element.classList.add(constants.show);
-    if (element.classList.contains(constants.hide)) {
-        element.classList.remove(constants.hide);
+    try {
+        element.classList.add(constants.show);
+        if (element.classList.contains(constants.hide)) {
+            element.classList.remove(constants.hide);
+        } 
+    } catch (e) {
+        if (element.length == 1) {
+            showElem(element[0]);
+        }
     }
 };
 
 const hideElem = (element) => {
-    element.classList.add(constants.hide);
-    if (element.classList.contains(constants.show)) {
-        element.classList.remove(constants.show);
+    try {
+        element.classList.add(constants.hide);
+        if (element.classList.contains(constants.show)) {
+            element.classList.remove(constants.show);
+        }
+    } catch (e) {
+        if (element.length == 1) {
+            hide(element[0]);
+        }
+        
     }
 };
 
 const showAllElements = (elements) => {
-    for (let index = 0; index < elements.length; index++) {
-        showElem(elements[index]);
+    for (const element of elements) {
+        showElem(element);
     }
 };
 
 const hideAllElements = (elements) => {
-    for (let index = 0; index < elements.length; index++) {
-        hideElem(elements[index]);
+    for (const element of elements) {
+        hideElem(element);
     }
 };
 
@@ -220,7 +233,7 @@ const setAttributes = (elements, exists = false) => {
     const lastButton = document.querySelector('#button-' + elements.key + '-' + (elements.index - 1));
 
     if (!lastButton) {
-        elements.buttonContainer.appendChild(button);
+        elements.container.appendChild(button);
     } else {
         insertAfter(lastButton, button);
     }
@@ -235,11 +248,7 @@ const setAttributes = (elements, exists = false) => {
 
 const addColor = (event) => {
     event.preventDefault();
-    const bContainer = document.querySelector('.buttons.flex-container');
-    const dContainer = document.querySelector('.divs.flex-container');
-    if (!bContainer || !dContainer) {
-        return;
-    }
+    const container = document.querySelector('#section-container');
     let exists = false;
     const form = document.querySelector('#addColor');
 
@@ -280,7 +289,7 @@ const addColor = (event) => {
     const last = divs[divs.length - 1];
 
     insertAfter(last, div);
-    const elements = CustomElement.createFullElement(color, key, div, bContainer, dContainer, null, index);
+    const elements = CustomElement.createFullElement(color, key, div, container, index);
     data[key].push(elements);
     elements.divs[index] = div;
     setDivProperties(elements, true);
@@ -289,7 +298,7 @@ const addColor = (event) => {
 };
 
 const createDivs = (elements) => {
-    const container = elements.divContainer;
+    const container = elements.container;
     const index = elements.index;
     const div = createElement('div', {
         'id': + 'div-' + elements.key + '-' + index,
@@ -302,19 +311,14 @@ const createDivs = (elements) => {
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const addElements = () => {
-    const divB = createElement('div', {'class': 'buttons flex-container'});
-    const divD = createElement('div', {'class': 'divs flex-container'});
-    const buttonSection = document.querySelector('#button-section');
-    buttonSection.appendChild(divB);
-    const colorSection = document.querySelector('#div-section');
-    colorSection.appendChild(divD);
+    const div = createElement('div', {'class': 'container'});
+
     let color, divColor, elements;
     for (const key in colors) {
         for (let index = 0; index < colors[key].length; index++) {
             color = getColor(key, index);
             divColor = createElement('div');
-            elements = CustomElement.createFullElement(color, key, divColor, divB, divD, null, index, undefined, '', colors[key].length, undefined, false,
-                buttonSection, colorSection);
+            elements = CustomElement.createFullElement(color, key, divColor, div, index, undefined, '', colors[key].length, undefined, false);
             data[key].push(elements);
             createDivs(elements);
             setDivProperties(elements);
@@ -370,8 +374,7 @@ const initialize = () => {
     //add elements
     addElements();
     // get containers
-    const bContainers = document.querySelectorAll('.buttons.flex-container');
-    const dContainers = document.querySelectorAll('.divs.flex-container');
+    const container = document.querySelectorAll('#section-container');
 
     const collapseButton = document.querySelector('#collapse-button');
     collapseButton.addEventListener('click', (event) => {
@@ -385,7 +388,7 @@ const initialize = () => {
     });
 
     // display containers
-    showAllElements([bContainers, dContainers]);
+    showAllElements(container);
 };
 
 window.onload = initialize;
