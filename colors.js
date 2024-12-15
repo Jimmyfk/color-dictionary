@@ -4,25 +4,23 @@ now each key has an array to add more colors to the same key
 todo check colors and add to existing array if it matches
  */
 const constants = {
-    defaultColor: '#ffffff',
-    defaultKey: 'white',
+    defaultColor: '#808080',
+    defaultKey: 'gray',
     show: 'show',
     hide: 'hide',
     space: ' ',
 };
 const colors = {
-    white: [constants.defaultColor],
-    black: ['#000000'],
-    red: ['#ff0000', 'darkred', 'crimson'],
-    green: ['#00ff00'],
+    gray: [constants.defaultColor],
+    darkGray: ['darkgray', 'dimgray', 'slategray', 'lightslategray'],
+    green: ['#90EE90'],
     blue: ['#0000ff'],
     violet: ['#ba55d3', '#7d02c7'],
 };
 
 const data = {
-    white: [],
-    black: [],
-    red: [],
+    gray: [],
+    darkGray: [],
     green: [],
     blue: [],
     violet: [],
@@ -148,6 +146,7 @@ const getColor = (key, index, element = undefined) => {
 const createButton = (elements) => {
     const button =  createElement('button', {
         'id': 'button-' + elements.key + '-' + elements.index,
+        'class': 'color-button',
         'style': 'background-color: ' + elements.color,
     }, elements.key + constants.space + (elements.index + 1));
 
@@ -200,6 +199,14 @@ const waitForElm = (selector, multipleSelectors = []) => new Promise(resolve => 
         subtree: true
     });
 });
+
+
+const waitForObject = async (obj) => {
+    if (obj === 'undefined' || !obj) {
+        await sleep(150);
+    } else if (obj === 'undefined' || !obj) {
+        waitForObject(obj);
+    }};
 
 const setDivProperties = (elements, comesFromForm = false) => {
     const index = elements.index;
@@ -287,6 +294,7 @@ const addColor = (event) => {
     }
     const divs = document.querySelectorAll('div .' + key);
     const last = divs[divs.length - 1];
+    waitForObject(data);
 
     insertAfter(last, div);
     const elements = CustomElement.createFullElement(color, key, div, container, index);

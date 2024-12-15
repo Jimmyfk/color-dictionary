@@ -24,7 +24,7 @@ const CustomElement = class Element {
         this.#index = index;
         this.#buttons = (buttons === undefined || typeof(buttons) !== 'object') ? [] : buttons;
         this.#selector = selector === undefined? '' : selector;
-        this.#length = length === undefined? 0 : length;
+        this.#length = length === undefined ? 0 : length;
         this.#divs = divs === undefined ? [] : divs;
         this.#visible = !visible ? false : visible;
     };
