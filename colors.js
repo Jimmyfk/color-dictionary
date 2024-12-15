@@ -370,8 +370,8 @@ const initialize = () => {
     //add elements
     addElements();
     // get containers
-    const bContainers = document.querySelectorAll('.button-container');
-    const dContainers = document.querySelectorAll('.div-container');
+    const bContainers = document.querySelectorAll('.buttons.flex-container');
+    const dContainers = document.querySelectorAll('.divs.flex-container');
 
     const collapseButton = document.querySelector('#collapse-button');
     collapseButton.addEventListener('click', (event) => {
